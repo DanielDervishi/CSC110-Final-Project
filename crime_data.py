@@ -29,7 +29,7 @@ class CrimeData:
         If the crime or neighbourhood has not been entered before, they are added into the crime_data dictionary.
         """
 
-        if crime not in self.crime_data[crime]:
+        if crime not in self.crime_data:
             self.crime_data[crime] = {}
 
         if neighbourhood not in self.crime_data[crime]:

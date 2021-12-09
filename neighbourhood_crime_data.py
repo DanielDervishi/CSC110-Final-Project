@@ -79,16 +79,29 @@ class NeighbourhoodCrimeData:
         # Create the figure
         scatter1 = go.Scatter(x=[t[0] for t in raw_data], y=y_train, mode='markers',
                               name=f'{self.neighbourhood} occurrences', fillcolor='green')
-        scatter2 = go.Scatter(x=[lower, upper], y=[min_val, max_val])
+        scatter2 = go.Scatter(x=[lower, upper], y=[min_val, max_val], mode='lines',
+                              name='Linear regression')
 
         fig = go.Figure()
         fig.add_trace(scatter1)
         fig.add_trace(scatter2)
 
         # Configure the figure
-        fig.update_layout(title='Linear regression of number of occurrences of murder in month',
-                          xaxis_title='Year',
-                          yaxis_title='Num occurrences')
+        fig.update_layout(title=f'Linear regression of number of occurrences of {self.crime_type} '
+                                f'in {self.neighbourhood} in {self.month_to_str(month)}',
+                          xaxis_title='Year', yaxis_title='Num occurrences')
 
         # Show the figure in the browser
         fig.show()
+        
+    
+    def get_error(self, month: int, model: LinearRegression) -> float:
+        """Return the error of the linear regression given the month of the data.
+        Thus method uses the RMSE."""
+        squared_sum, count = 0, 0
+
+        for x, y in self.get_occurrences(month):
+            squared_sum += (y - (x * model.coef_[0] + model.intercept_)) ** 2
+            count += 1
+
+        return math.sqrt(squared_sum / count)

@@ -1,3 +1,4 @@
 sklearn
 numpy
 plotly.graph_objects
+pandas

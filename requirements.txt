@@ -1,5 +1,5 @@
 sklearn
 numpy
-plotly.graph_objects
+plotly
 pandas
 geopandas

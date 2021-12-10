@@ -9742,8 +9742,6 @@ Homicide,Central Business District,2007,6,1
 Homicide,Central Business District,2007,3,1
 Homicide,Central Business District,2007,9,1
 Homicide,Central Business District,2007,2,1
-Homicide,,2018,4,1
-Homicide,,2016,3,1
 Homicide,Grandview-Woodland,2011,7,1
 Homicide,Grandview-Woodland,2011,9,1
 Homicide,Grandview-Woodland,2006,3,1
@@ -17176,44 +17174,6 @@ Offence Against a Person,Renfrew-Collingwood,2018,7,11
 Offence Against a Person,Renfrew-Collingwood,2018,4,8
 Offence Against a Person,Renfrew-Collingwood,2018,2,9
 Offence Against a Person,Renfrew-Collingwood,2018,9,10
-Offence Against a Person,,2010,1,1
-Offence Against a Person,,2010,11,1
-Offence Against a Person,,2018,1,1
-Offence Against a Person,,2021,9,1
-Offence Against a Person,,2021,2,1
-Offence Against a Person,,2021,8,1
-Offence Against a Person,,2021,6,1
-Offence Against a Person,,2014,7,1
-Offence Against a Person,,2014,1,2
-Offence Against a Person,,2014,2,1
-Offence Against a Person,,2012,5,1
-Offence Against a Person,,2012,8,1
-Offence Against a Person,,2012,7,2
-Offence Against a Person,,2020,4,1
-Offence Against a Person,,2020,6,1
-Offence Against a Person,,2011,3,1
-Offence Against a Person,,2003,8,1
-Offence Against a Person,,2003,12,1
-Offence Against a Person,,2003,10,1
-Offence Against a Person,,2017,12,1
-Offence Against a Person,,2017,2,1
-Offence Against a Person,,2017,1,1
-Offence Against a Person,,2008,1,1
-Offence Against a Person,,2008,8,1
-Offence Against a Person,,2008,4,1
-Offence Against a Person,,2008,7,1
-Offence Against a Person,,2015,4,1
-Offence Against a Person,,2004,6,1
-Offence Against a Person,,2004,2,1
-Offence Against a Person,,2004,4,1
-Offence Against a Person,,2016,11,1
-Offence Against a Person,,2013,9,1
-Offence Against a Person,,2009,12,1
-Offence Against a Person,,2009,6,1
-Offence Against a Person,,2005,10,1
-Offence Against a Person,,2005,7,2
-Offence Against a Person,,2007,7,1
-Offence Against a Person,,2019,2,1
 Offence Against a Person,Kitsilano,2008,9,6
 Offence Against a Person,Kitsilano,2008,5,9
 Offence Against a Person,Kitsilano,2008,3,9
@@ -39641,8 +39601,6 @@ Vehicle Collision or Pedestrian Struck (with Fatality),Shaughnessy,2011,6,1
 Vehicle Collision or Pedestrian Struck (with Fatality),Shaughnessy,2005,6,1
 Vehicle Collision or Pedestrian Struck (with Fatality),Shaughnessy,2008,8,1
 Vehicle Collision or Pedestrian Struck (with Fatality),Shaughnessy,2015,11,1
-Vehicle Collision or Pedestrian Struck (with Fatality),,2017,12,1
-Vehicle Collision or Pedestrian Struck (with Fatality),,2005,6,1
 Vehicle Collision or Pedestrian Struck (with Fatality),Mount Pleasant,2021,9,1
 Vehicle Collision or Pedestrian Struck (with Fatality),Mount Pleasant,2021,3,1
 Vehicle Collision or Pedestrian Struck (with Fatality),Mount Pleasant,2008,1,3
@@ -39766,57 +39724,6 @@ Vehicle Collision or Pedestrian Struck (with Fatality),Oakridge,2004,6,1
 Vehicle Collision or Pedestrian Struck (with Fatality),South Cambie,2004,6,1
 Vehicle Collision or Pedestrian Struck (with Fatality),South Cambie,2003,12,1
 Vehicle Collision or Pedestrian Struck (with Fatality),Musqueam,2011,3,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2003,6,3
-Vehicle Collision or Pedestrian Struck (with Injury),,2003,9,2
-Vehicle Collision or Pedestrian Struck (with Injury),,2003,8,3
-Vehicle Collision or Pedestrian Struck (with Injury),,2003,5,8
-Vehicle Collision or Pedestrian Struck (with Injury),,2003,3,7
-Vehicle Collision or Pedestrian Struck (with Injury),,2003,7,4
-Vehicle Collision or Pedestrian Struck (with Injury),,2003,1,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2003,4,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2003,11,2
-Vehicle Collision or Pedestrian Struck (with Injury),,2003,10,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2004,11,3
-Vehicle Collision or Pedestrian Struck (with Injury),,2004,10,4
-Vehicle Collision or Pedestrian Struck (with Injury),,2004,4,4
-Vehicle Collision or Pedestrian Struck (with Injury),,2004,3,5
-Vehicle Collision or Pedestrian Struck (with Injury),,2004,9,2
-Vehicle Collision or Pedestrian Struck (with Injury),,2004,12,4
-Vehicle Collision or Pedestrian Struck (with Injury),,2004,6,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2004,2,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2016,1,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2016,11,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2016,7,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2020,3,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2020,1,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2015,3,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2015,7,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2015,8,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2015,4,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2017,2,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2017,6,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2017,9,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2012,9,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2012,7,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2012,3,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2012,5,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2012,2,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2011,4,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2006,1,2
-Vehicle Collision or Pedestrian Struck (with Injury),,2006,2,2
-Vehicle Collision or Pedestrian Struck (with Injury),,2006,5,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2005,9,2
-Vehicle Collision or Pedestrian Struck (with Injury),,2005,4,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2005,5,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2021,4,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2021,3,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2021,9,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2019,9,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2008,7,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2014,5,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2014,11,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2014,7,1
-Vehicle Collision or Pedestrian Struck (with Injury),,2007,6,1
 Vehicle Collision or Pedestrian Struck (with Injury),Mount Pleasant,2003,12,9
 Vehicle Collision or Pedestrian Struck (with Injury),Mount Pleasant,2003,5,7
 Vehicle Collision or Pedestrian Struck (with Injury),Mount Pleasant,2003,10,17

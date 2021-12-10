@@ -4,7 +4,7 @@
 from sklearn.linear_model import LinearRegression
 import numpy as np
 import plotly.graph_objects as go
-
+import math
 
 class NeighbourhoodCrimeData:
     """A record of crime data of a specific crime for a given neighbourhood.

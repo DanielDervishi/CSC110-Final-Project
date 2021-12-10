@@ -29,14 +29,14 @@ class CrimeData:
         If the crime or neighbourhood has not been entered before, they are added into the crime_data dictionary.
         """
 
-        if crime not in self.crime_data[crime]:
+        if crime not in self.crime_data:
             self.crime_data[crime] = {}
 
         if neighbourhood not in self.crime_data[crime]:
             self.crime_data[crime][neighbourhood] = NeighbourhoodCrimeData(neighbourhood)
             self.crime_data[crime][neighbourhood].add_data(year, month, 0)
 
-        self.crime_data[crime][neighbourhood].add_data(year, month, occurences)
+        self.crime_data[crime][neighbourhood].increment_data(year, month, occurences)
 
     # def get_occurences(self, crime: str, neighbourhood: str, year: int, month: int) -> int:
     #     """

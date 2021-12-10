@@ -55,53 +55,59 @@ class NeighbourhoodCrimeData:
             data.append((year, self.occurrences[year][month]))
         return data
 
-    def get_linear_regression(self, month: int) -> None:
+    def get_linear_regression(self, month: int, include: range) -> LinearRegression:
         """Print the linear regression for this data for the given month."""
         # Initialize the model
         model = LinearRegression()
 
         raw_data = self.get_occurrences(month)
-        x_train = [[t[0]] for t in raw_data]
-        y_train = [t[1] for t in raw_data]
+        x_train = [[t[0]] for t in raw_data if t[0] in include]
+        y_train = [t[1] for t in raw_data if t[0] in include]
 
         # Train the model
         model.fit(x_train, y_train)
 
-        # Print the model.
-        print("h(x) = {} + {}*x".format(np.round(model.intercept_, 3), np.round(model.coef_[0], 3)))
+        return model
 
-        # Get points for the line
-        lower = x_train[0][0] - 1
-        min_val = lower * model.coef_[0] + model.intercept_
-        upper = x_train[-1][0] + 1
-        max_val = upper * model.coef_[0] + model.intercept_
+#         # Print the model.
+#         print("h(x) = {} + {}*x".format(np.round(model.intercept_, 3), np.round(model.coef_[0], 3)))
 
-        # Create the figure
-        scatter1 = go.Scatter(x=[t[0] for t in raw_data], y=y_train, mode='markers',
-                              name=f'{self.neighbourhood} occurrences', fillcolor='green')
-        scatter2 = go.Scatter(x=[lower, upper], y=[min_val, max_val], mode='lines',
-                              name='Linear regression')
+#         # Get points for the line
+#         lower = x_train[0][0] - 1
+#         min_val = lower * model.coef_[0] + model.intercept_
+#         upper = x_train[-1][0] + 1
+#         max_val = upper * model.coef_[0] + model.intercept_
 
-        fig = go.Figure()
-        fig.add_trace(scatter1)
-        fig.add_trace(scatter2)
+#         # Create the figure
+#         scatter1 = go.Scatter(x=[t[0] for t in raw_data], y=y_train, mode='markers',
+#                               name=f'{self.neighbourhood} occurrences', fillcolor='green')
+#         scatter2 = go.Scatter(x=[lower, upper], y=[min_val, max_val], mode='lines',
+#                                name='Linear regression')
 
-        # Configure the figure
-        fig.update_layout(title=f'Linear regression of number of occurrences of {self.crime_type} '
-                                f'in {self.neighbourhood} in {self.month_to_str(month)}',
-                          xaxis_title='Year', yaxis_title='Num occurrences')
+#         fig = go.Figure()
+#         fig.add_trace(scatter1)
+#         fig.add_trace(scatter2)
 
-        # Show the figure in the browser
-        fig.show()
-        
-    
-    def get_error(self, month: int, model: LinearRegression) -> float:
-        """Return the error of the linear regression given the month of the data.
+#         # Configure the figure
+#         fig.update_layout(title=f'Linear regression of number of occurrences of {self.neighbourhood} '
+#                                 f'in {self.neighbourhood} in month',
+#                           xaxis_title='Year', yaxis_title='Num occurrences')
+#         # fig.update_layout(title=f'Linear regression of number of occurrences of {self.neighbourhood} '
+#         #                         f'in {self.neighbourhood} in {self.month_to_str(month)}',
+#         #                   xaxis_title='Year', yaxis_title='Num occurrences')
+
+#         # Show the figure in the browser
+#         fig.show()
+
+    def get_error(self, month: int, include: range, model: LinearRegression) -> float:
+        """Return the error of the linear regression given the month of the data
+        and years that should be included from the calculation.
         Thus method uses the RMSE."""
         squared_sum, count = 0, 0
 
         for x, y in self.get_occurrences(month):
-            squared_sum += (y - (x * model.coef_[0] + model.intercept_)) ** 2
-            count += 1
+            if x in include:
+                squared_sum += (y - model.predict(x)) ** 2
+                count += 1
 
         return math.sqrt(squared_sum / count)

@@ -1,6 +1,6 @@
 """A class to store all crime data for CSC110 final project.
 """
-from neighbourhood_crime_data import NeighbourhoodCrimeData
+from neighbourhood_crime import NeighbourhoodCrimePIndex, NeighbourhoodCrimeOccurrences
 
 
 class CrimeData:
@@ -10,7 +10,8 @@ class CrimeData:
         - crime_type: dict mapping crime type to dict of neighbourhood crime data objects.
     """
 
-    crime_data: dict[str, dict[str, NeighbourhoodCrimeData]]
+    crime_occurrences: dict[str, dict[str, NeighbourhoodCrimeOccurrences]]
+    crime_pindex: dict[str, dict[str, NeighbourhoodCrimePIndex]]
 
     def __init__(self, crime_data_param=None) -> None:
         """
@@ -18,9 +19,9 @@ class CrimeData:
         otherwise
         """
         if crime_data_param is None:
-            self.crime_data = {}
+            self.crime_occurrences = {}
         else:
-            self.crime_data = crime_data_param
+            self.crime_occurrences = crime_data_param
 
     def increment_crime(self, crime: str, neighbourhood: str, year: int, month: int, occurences: int) -> None:
         """Increments the number of crimes of a specific type in a specific neighbourhood in the
@@ -29,17 +30,16 @@ class CrimeData:
         If the crime or neighbourhood has not been entered before, they are added into the crime_data dictionary.
         """
 
-        if crime not in self.crime_data:
-            self.crime_data[crime] = {}
+        if crime not in self.crime_occurrences:
+            self.crime_occurrences[crime] = {}
 
-        if neighbourhood not in self.crime_data[crime]:
-            self.crime_data[crime][neighbourhood] = NeighbourhoodCrimeData(neighbourhood)
-            self.crime_data[crime][neighbourhood].add_data(year, month, 0)
+        if neighbourhood not in self.crime_occurrences[crime]:
+            self.crime_occurrences[crime][neighbourhood] = NeighbourhoodCrimeOccurrences(neighbourhood, crime)
+            self.crime_occurrences[crime][neighbourhood].set_data(year, month, 0)
 
-        self.crime_data[crime][neighbourhood].increment_data(year, month, occurences)
+        self.crime_occurrences[crime][neighbourhood].increment_data(year, month, occurences)
 
-    # def get_occurences(self, crime: str, neighbourhood: str, year: int, month: int) -> int:
-    #     """
-    #     Returns number of occurences of a crime in the path (crime -> neighbourhood -> year -> month) in crime_data.
-    #     """
-    #     return (crime, neighbourhood, self.crime_data[crime][neighbourhood].get_occurrences(year, month))
+    def create_pindex_data(self) -> None:
+        """
+        creates all the data that goes into the p-index dict
+        """

@@ -53,11 +53,11 @@ def create_csv(crime_data_class: CrimeData) -> None:
 
     # create a dictionary to properly format data before converting it to csv
     formatted_dict = {'crime_type': [], 'neighbourhood': [], 'year': [], 'month': [], 'count': []}
-    for crime in crime_data_class.crime_data:
-        for neighbourhood in crime_data_class.crime_data[crime]:
-            for year in crime_data_class.crime_data[crime][neighbourhood].occurrences:
-                for month in crime_data_class.crime_data[crime][neighbourhood].occurrences[year]:
-                    count = crime_data_class.crime_data[crime][neighbourhood].occurrences[year][month]
+    for crime in crime_data_class.crime_occurrences:
+        for neighbourhood in crime_data_class.crime_occurrences[crime]:
+            for year in crime_data_class.crime_occurrences[crime][neighbourhood].occurrences:
+                for month in crime_data_class.crime_occurrences[crime][neighbourhood].occurrences[year]:
+                    count = crime_data_class.crime_occurrences[crime][neighbourhood].occurrences[year][month]
                     if isinstance(crime, str) and isinstance(neighbourhood, str) and isinstance(year, int)\
                             and isinstance(month, int) and isinstance(count, int):
                         formatted_dict['crime_type'].append(crime)

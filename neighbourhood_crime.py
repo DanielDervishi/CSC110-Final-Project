@@ -118,7 +118,7 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
         return lst
 
     def set_data(self, year: int, month: int, p_index: int) -> None:
-        """Add a record of the number of occurrences of the crime in a given month and year.
+        """Record p_index of a given year and month.
 
         If there was already data for that year and month, it will be overridden.
         """

@@ -22,13 +22,13 @@ class NeighbourhoodCrime:
 
 class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
     """
-    Stores number of crime occurrences in a neighbourhood for a certain crime in a given year and month
+    Stores number of crime occurrences in a neighbourhood for a certain crime in a given year and month.
     """
     occurrences: dict[int, dict[int, int]]
 
     def __init__(self, neighbourhood: str, crime_type: str, occurrences=None) -> None:
-        """Initialize this NeighbourhoodCrimeData object with the neighbourhood and, optionally, the occurrences
-        data.
+        """Initialize this NeighbourhoodCrimeOccurrences object with the neighbourhood, crime_type,
+        optionally, the occurrences data.
         """
         NeighbourhoodCrime.__init__(self, neighbourhood=neighbourhood, crime_type=crime_type)
 
@@ -58,7 +58,7 @@ class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
 
     def get_occurrences(self, month: int) -> list[tuple[int, int]]:
         """Get the number of occurrences of the crime for each year in the given month. Formatted
-        as a list of tuples in the form (year, occurrences)
+        as a list of tuples in the form (year, occurrences).
         """
         data = []
         for year in self.occurrences:
@@ -68,12 +68,12 @@ class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
 
 class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
     """
-    Stores p-index in a neighbourhood for a certain crime in a given year and month
+    Stores p-index in a neighbourhood for a certain crime in a given year and month.
 
     Note:
-        - P-Indexes are in the range of -100 to 100 exclusive.
+        - P-Indexes are in the range of -100 to 100 exclusive
         - -100 represents an unexpected decrease in crime
-        - 100 represents an expected increase in crime
+        - 100 represents an unexpected increase in crime
         - 0 represents expected
     """
     p_index_dict: dict[int, dict[int, int]]
@@ -81,17 +81,17 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
     def __init__(self, neighbourhood: str, crime_type: str,
                  neighbourhood_crime_occurences: NeighbourhoodCrimeOccurrences, fit_range: tuple[int, int],
                  predict_range: tuple[int, int]) -> None:
-        """Initialize this NeighbourhoodCrimePIndex object with the neighbourhood and, optionally, the occurrences
-        data.
+        """Initialize this NeighbourhoodCrimePIndex object with the neighbourhood, crime_type and build the
+        p_index_dict using the neighbourhood_crime_occurrences data, fit_range and predict_range.
 
         Parameters:
-            - fit_range: range of years used to make base the model
+            - fit_range: range of years used to make the model
             - predict_range: range of years to make predictions with the model
 
         Preconditions
             - fit_range[1] < predict_range[0]
 
-        Predict range starts after the fit range
+        Predict range starts after the fit range.
 
         ADD PRECONDITIONS
         """

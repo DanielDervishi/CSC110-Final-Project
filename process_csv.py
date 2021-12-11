@@ -75,7 +75,7 @@ def create_csv(crime_data_class: CrimeData) -> None:
 
 def get_vancouver_data() -> CrimeData:
     """
-    Return data formatted using CrimeData from crime_data_vancouver.csv
+    Return data formatted using CrimeData from crime_data_vancouver.csv.
     """
     return build_crime_data_class(path='./crime_data_vancouver.csv', col_num_crime_type=0, col_num_year=2,
                                   col_num_month=3, col_num_neighbourhood=1, col_num_occurences=4)

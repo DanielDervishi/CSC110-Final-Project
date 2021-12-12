@@ -152,7 +152,7 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
             self.p_index_dict[year] = {}
         self.p_index_dict[year][month] = p_index
 
-    def get_data(self, year: int, month: int) -> int:
+    def get_data(self, year: int, month: int) -> float:
         """Returns p-index of a given year and month
         """
         return self.p_index_dict[year][month]

@@ -72,3 +72,55 @@ class CrimeData:
                     NeighbourhoodCrimePIndex(neighbourhood, crime_type,
                                              self.crime_occurrences[crime_type][neighbourhood],
                                              fit_range, predict_range)
+
+    def average_pindexes(self) -> float:
+        """
+        Returns average of the absolute value of all p-indexes
+        """
+        sum = 0
+        count = 0
+        for crime in self.crime_pindex.values():
+            for neighbourhood in crime.values():
+                for year in neighbourhood.p_index_dict:
+                    for p_value in neighbourhood.p_index_dict[year].values():
+                        sum += p_value
+                        count += 1
+        return sum/count
+
+    def average_per_crime_pindexes(self) -> list[tuple[str, float]]:
+        """
+        Returns average of the absolute value of all p-indexes
+        """
+        sum = 0
+        count = 0
+        p_value_list = []
+        for crime in self.crime_pindex:
+            for neighbourhood in self.crime_pindex[crime].values():
+                for year in neighbourhood.p_index_dict:
+                    for p_value in neighbourhood.p_index_dict[year].values():
+                        sum += p_value
+                        count += 1
+            p_value_list.append((crime, sum / count))
+            sum = 0
+            count = 0
+        return p_value_list
+
+    def average_per_crime_per_neighbourhood_pindexes(self) -> dict[str, list[tuple[str, float]]]:
+        """
+        Returns average of the absolute value of all p-indexes
+        """
+        sum = 0
+        count = 0
+        p_value_dict = {}
+        for crime in self.crime_pindex:
+            for neighbourhood in self.crime_pindex[crime].values():
+                for year in neighbourhood.p_index_dict:
+                    for p_value in neighbourhood.p_index_dict[year].values():
+                        sum += p_value
+                        count += 1
+                if crime not in p_value_dict:
+                    p_value_dict[crime] = []
+                p_value_dict[crime].append((neighbourhood.neighbourhood, sum / count))
+                sum = 0
+                count = 0
+        return p_value_dict

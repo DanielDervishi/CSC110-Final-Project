@@ -1,8 +1,6 @@
 """A class to store neighbourhood crime data for CSC110 final project.
 David, Daniel, Martin
 """
-import datetime
-from dateutil import relativedelta
 
 
 class NeighbourhoodCrime:
@@ -28,27 +26,14 @@ class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
     """
     occurrences: dict[int, dict[int, int]]
 
-    def __init__(self, neighbourhood: str, crime_type: str, start_year_month: tuple[int, int],
-                 end_year_month: tuple[int, int]) -> None:
+    def __init__(self, neighbourhood: str, crime_type: str) -> None:
         """Initialize this NeighbourhoodCrimeOccurrences object with the neighbourhood, crime_type,
         optionally, the occurrences data.
 
-        Initializes the occurrences dictionary with initial values of zero for each year and month
-    within a specified range (inclusive) by mutating it from (start_year_month, end_year_month)
         """
         NeighbourhoodCrime.__init__(self, neighbourhood=neighbourhood, crime_type=crime_type)
 
         self.occurrences = {}
-        start_date = datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
-        end_date = datetime.date(year=end_year_month[0], month=end_year_month[1], day=1)
-
-        date_so_far = start_date
-
-        while date_so_far <= end_date:
-            if date_so_far.year not in self.occurrences:
-                self.occurrences[date_so_far.year] = {}
-            self.occurrences[date_so_far.year][date_so_far.month] = 0
-            date_so_far += relativedelta.relativedelta(months=1)
 
     def set_data(self, year: int, month: int, occurrences: int) -> None:
         """Add a record of the number of occurrences of the crime in a given month and year.
@@ -72,8 +57,6 @@ class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
     def get_occurrences(self, month: int, years_to_get: tuple[int, int]) -> list[tuple[int, int]]:
         """Get the number of occurrences of the crime for each year in the given month. Formatted
         as a list of tuples in the form (year, occurrences).
-
-
         """
         month_data = []
         for year in range(years_to_get[0], years_to_get[1] + 1):

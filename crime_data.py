@@ -1,6 +1,8 @@
 """A class to store all crime data for CSC110 final project.
 """
 from neighbourhood_crime import NeighbourhoodCrimePIndex, NeighbourhoodCrimeOccurrences
+import datetime
+from dateutil import relativedelta
 
 
 class CrimeData:
@@ -27,15 +29,8 @@ class CrimeData:
         else:
             self.crime_occurrences = crime_data_param
         self.crime_pindex = {}
-    # def create_crime(self, crime: str, neighbourhood: str, year: int, month: int):
-    #     if neighbourhood not in self.crime_occurrences[crime]:
-    #         if crime not in self.crime_occurrences:
-    #             self.crime_occurrences[crime] = {}
-    #
-    #         if neighbourhood not in self.crime_occurrences[crime]:
 
-    def increment_crime(self, crime: str, neighbourhood: str, year: int, month: int, occurrences: int,
-                        start_year_month=(2003, 1), end_year_month=(2021, 11)) -> None:
+    def increment_crime(self, crime: str, neighbourhood: str, year: int, month: int, occurrences: int,) -> None:
         """Increments the number of crime occurrences of a specific type in a specific neighbourhood in the
         given year and month by a specified amount.
 
@@ -55,10 +50,20 @@ class CrimeData:
 
         if neighbourhood not in self.crime_occurrences[crime]:
             self.crime_occurrences[crime][neighbourhood] = \
-                NeighbourhoodCrimeOccurrences(neighbourhood, crime, start_year_month, end_year_month)
+                NeighbourhoodCrimeOccurrences(neighbourhood, crime)
             self.crime_occurrences[crime][neighbourhood].set_data(year, month, 0)
 
         self.crime_occurrences[crime][neighbourhood].increment_data(year, month, occurrences)
+
+    def fill_gaps(self, start_year_month: tuple[int, int], end_year_month: tuple[int, int]):
+        """
+        For each crime and neighbourhood, the years and months that have no occurrences within the range
+        specified as start_year_month - end_year_month have the value of the occurrences dictionary at
+        each of these years and months set to zero.
+        """
+        for crime in self.crime_occurrences.values():
+            for neighbourhood in crime.values():
+                set_null_in_range_to_zero(start_year_month, end_year_month, neighbourhood.occurrences)
 
     def create_pindex_data(self, fit_range: tuple[int, int], predict_range: tuple[int, int]) -> None:
         """
@@ -124,3 +129,24 @@ class CrimeData:
                 sum = 0
                 count = 0
         return p_value_dict
+
+
+def set_null_in_range_to_zero(start_year_month: tuple[int, int], end_year_month: tuple[int, int], occurrences_dict: dict[int, dict[int, int]]) -> None:
+    """
+    Mutates the occurrences dictionary by setting values to zero for each year and month
+    within a specified range (start_year_month, end_year_month) (inclusive) where that month
+    and year does not already have a value for occurrences.
+    """
+    start_date = datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
+    end_date = datetime.date(year=end_year_month[0], month=end_year_month[1], day=1)
+
+    date_so_far = start_date
+
+    while date_so_far <= end_date:
+
+        if date_so_far.year not in occurrences_dict:
+            occurrences_dict[date_so_far.year] = {}
+
+        if date_so_far.month not in occurrences_dict[date_so_far.year]:
+            occurrences_dict[date_so_far.year][date_so_far.month] = 0
+        date_so_far += relativedelta.relativedelta(months=1)

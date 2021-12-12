@@ -1,75 +1,63 @@
-"""
+""" Daniel Dervishi
 Processes the csv for faster computations.
 """
 from crime_data import CrimeData
 import pandas as pd
-import datetime
 
 
-def build_crime_data_class(path: str, col_num_crime_type: int,
-                           col_num_year: int, col_num_month: int, col_num_neighbourhood: int,
-                           reading_processed_data: bool, col_num_occurrences=None,
-                           start_year_month=None, end_year_month=None) -> CrimeData:
+def get_vancouver_data(path: str) -> CrimeData:
     """
-    Converts the data from the dataframe to the desired format using the a CrimeData object.
-
-    Only to be used with the pre-processed-crime-data-vancouver and crime_data_vancouver datasets.
-
-    Parameters:
-        - path: specifies which csv file where data will be read
-        - col_num_crime_type: specifies the column of the dataframe in which crime type is stored
-        - col_num_year: specifies the column of the dataframe in which year is stored
-        - col_num_month: specifies the column of the dataframe in which month is stored
-        - col_num_neighbourhood: specifies the column of the dataframe in which neighbourhood is stored
-        - col_num_occurrences: specifies the column of the dataframe in which number of occurrences is stored
-        (if applicable), defaults to 1 otherwise.
-        - start_year_month - end_year_month, range in which data will stored (should only be specified when
-        processing raw csv)
-        - reading_processed_csv: True if you are reading a processed csv and false otherwise.
+    Return data formatted using CrimeData from crime_data_vancouver.csv.
     """
-
-    pre_processed_data = pd.read_csv(path)
-    post_processing_data = CrimeData()
-
-    # useful for first pass through when building the processed data
-    if not reading_processed_data:
-        for _, row in pre_processed_data.iterrows():
-            if check_date_in_range(start_year_month, end_year_month, (row[col_num_year], row[col_num_month])):
-                post_processing_data.increment_crime(row[col_num_crime_type], row[col_num_neighbourhood],
-                                                     row[col_num_year], row[col_num_month], 1)
-        post_processing_data.fill_gaps(start_year_month, end_year_month)
-
-    # useful for second pass through when reading processed data
-    else:
-        for _, row in pre_processed_data.iterrows():
-            post_processing_data.increment_crime(row[col_num_crime_type], row[col_num_neighbourhood],
-                                                 row[col_num_year], row[col_num_month], row[col_num_occurrences])
-    return post_processing_data
+    df = pd.read_csv(path)
+    return dataframe_to_crime_data(df, 0, 1, 2, 3, 4)
 
 
-def create_csv(crime_data_class: CrimeData) -> None:
+def create_csv(raw_path: str, processed_path: str, necessary_columns: list, remove_nan=True, fill_gaps=False,
+                 start_year_month=None, end_year_month=None) -> None:
     """
-    Creates new csv by first converting the data into the correct format and then using methods
-    from the pandas module.
+    code to create a new csv
+    >>> create_csv('./pre-processed-crime-data-vancouver.csv', './crime_data_vancouver_test_2.csv',\
+    ['TYPE','NEIGHBOURHOOD', 'YEAR', 'MONTH'], start_year_month=(2003,1), end_year_month=(2021,11))
 
-    Code run in console to create the new dataframe
-    >>> df = build_crime_data_class('./pre-processed-crime-data-vancouver.csv', \
-    col_num_crime_type= 0, col_num_year = 1, col_num_month = 2, col_num_neighbourhood = 7, \
-    reading_processed_data=False, start_year_month=(2003,1), end_year_month=(2021,11))
-    >>> create_csv(df)
-
-    Parameters:
-        crime_data_class: CrimeData object with data that we wish to convert to csv
     """
+    # filter to only include necessary columns
+    df = pd.read_csv(raw_path, usecols=necessary_columns)
 
+    # remove all rows with empty entries
+    if remove_nan:
+        df.dropna(inplace=True)
+
+    # count number occurrences for a given crimetype -> neighbourhood -> year -> month
+    df = df.value_counts().reset_index().rename(columns={0: 'COUNT'})
+    df = df.filter(items=['TYPE', 'NEIGHBOURHOOD', 'YEAR', 'MONTH', 'COUNT'])
+    df = dataframe_to_crime_data(df, 0, 1, 2, 3, 4)
+
+    # fill in values that have no occurrences
+    if start_year_month is None or end_year_month is None and fill_gaps:
+        raise FillRangeNotSpecifiedError
+    elif fill_gaps:
+        df.fill_gaps(start_year_month, end_year_month)
+
+    # convert the crimedata back into a dataframe
+    df = crime_data_to_dataframe(df)
+
+    # write to csv
+    df.to_csv(processed_path, index=False)
+
+
+def crime_data_to_dataframe(crime_data: CrimeData) -> pd.DataFrame:
+    """
+    Converts a CrimeData object to a pd.Dataframe object.
+    """
     # create a dictionary to properly format data before converting it to csv
     formatted_dict = {'crime_type': [], 'neighbourhood': [], 'year': [], 'month': [], 'count': []}
-    for crime in crime_data_class.crime_occurrences:
-        for neighbourhood in crime_data_class.crime_occurrences[crime]:
-            for year in crime_data_class.crime_occurrences[crime][neighbourhood].occurrences:
-                for month in crime_data_class.crime_occurrences[crime][neighbourhood].occurrences[year]:
-                    count = crime_data_class.crime_occurrences[crime][neighbourhood].occurrences[year][month]
-                    if isinstance(crime, str) and isinstance(neighbourhood, str) and isinstance(year, int)\
+    for crime in crime_data.crime_occurrences:
+        for neighbourhood in crime_data.crime_occurrences[crime]:
+            for year in crime_data.crime_occurrences[crime][neighbourhood].occurrences:
+                for month in crime_data.crime_occurrences[crime][neighbourhood].occurrences[year]:
+                    count = crime_data.crime_occurrences[crime][neighbourhood].occurrences[year][month]
+                    if isinstance(crime, str) and isinstance(neighbourhood, str) and isinstance(year, int) \
                             and isinstance(month, int) and isinstance(count, int):
                         formatted_dict['crime_type'].append(crime)
                         formatted_dict['neighbourhood'].append(neighbourhood)
@@ -78,26 +66,25 @@ def create_csv(crime_data_class: CrimeData) -> None:
                         formatted_dict['count'].append(count)
 
     # convert the dictionary to a dataframe
-    dataframe = pd.DataFrame(formatted_dict)
-
-    # convert the dataframe to a csv with this path
-    dataframe.to_csv('./crime_data_vancouver.csv', index=False)
+    return pd.DataFrame(formatted_dict)
 
 
-def get_vancouver_data() -> CrimeData:
+def dataframe_to_crime_data(df: pd.DataFrame, col_num_crime_type: int, col_num_neighbourhood: int,
+                            col_num_year: int, col_num_month: int, col_num_occurrences: int) -> CrimeData:
     """
-    Return data formatted using CrimeData from crime_data_vancouver.csv.
+    creates a dataframe using the crimeData
     """
-    return build_crime_data_class(path='./crime_data_vancouver.csv', col_num_crime_type=0, col_num_year=2,
-                                  col_num_month=3, col_num_neighbourhood=1, col_num_occurrences=4,
-                                  reading_processed_data=True)
+    crime_data = CrimeData()
+    for _, row in df.iterrows():
+        crime_data.increment_crime(row[col_num_crime_type], row[col_num_neighbourhood],
+                                   row[col_num_year], row[col_num_month], row[col_num_occurrences])
+
+    return crime_data
 
 
-def check_date_in_range(start_year_month: tuple[int, int],
-                        end_year_month: tuple[int, int], date_year_month: tuple[int, int]) -> bool:
-    """Checks if a date is between start_year_month and end_year_month inclusive
+class FillRangeNotSpecifiedError(Exception):
     """
-    start = datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
-    end = datetime.date(year=end_year_month[0], month=end_year_month[1], day=1)
-    date = datetime.date(year=date_year_month[0], month=date_year_month[1], day=1)
-    return start <= date <= end
+    When creating the csv, it was specified that user wanted to fill values between start_year_month
+    and end_year_month that did not already have values for number of occurrences with 0, but one or
+    more of these variables was not defined.
+    """

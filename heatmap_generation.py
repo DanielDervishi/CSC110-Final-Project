@@ -12,11 +12,12 @@ from dash import html
 def generate_heatmap(data: CrimeData) -> None:
     """Generate an animated heatmap for the pindexes of the crime over time given the CrimeData,
     data."""
+    # open the geojson file of the neighbourhood boundaries
     with open('local-area-boundary.geojson') as file:
         regions = json.load(file)
 
+    # Create a pandas dataframe with all the necessary data
     unpacked_data = unpack_data(data)
-
     df = pd.DataFrame({'date': unpacked_data[0],
                        'region': unpacked_data[1],
                        'p-index': unpacked_data[2],
@@ -24,7 +25,7 @@ def generate_heatmap(data: CrimeData) -> None:
 
     crime_types = list(data.crime_pindex.keys())
 
-    # create a dash app with a dropdown menu so that we can switch between graphs
+    # Create a dash app with a dropdown menu so that we can switch between graphs
     app = dash.Dash()
     app.layout = html.Div([
         dcc.Dropdown(
@@ -34,6 +35,7 @@ def generate_heatmap(data: CrimeData) -> None:
         ),
         dcc.Graph(id='choropleth-graph')])
 
+    # this function is called every time the dropdown menu is updated.
     @app.callback(
         dash.dependencies.Output('choropleth-graph', 'figure'),
         [dash.dependencies.Input('crime-type-dropdown', 'value')])

@@ -3,3 +3,4 @@ numpy
 plotly
 pandas
 geopandas
+dash

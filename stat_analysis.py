@@ -2,22 +2,22 @@
 statistical analysis
 Martin and Daniel
 """
-from neighbourhood_crime import NeighbourhoodCrimeOccurrences, NeighbourhoodCrimePIndex, NeighbourhoodCrime
+import neighbourhood_crime
 from sklearn.linear_model import LinearRegression
 import numpy as np
 import plotly.graph_objects as go
 import math
 
 
-def gen_linear_regression(occurences: NeighbourhoodCrimeOccurrences, month: int,
-                          include: list[int]) -> LinearRegression:
+def gen_linear_regression(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences, month: int,
+                          include: tuple[int, int]) -> LinearRegression:
     """Print the linear regression for this data for the given month."""
     # Initialize the model
     model = LinearRegression()
 
-    raw_data = occurences.get_occurrences(month)
-    x_train = [[t[0]] for t in raw_data if t[0] in include]
-    y_train = [t[1] for t in raw_data if t[0] in include]
+    raw_data = occurrences.get_occurrences(month, include)
+    x_train = [[t[0]] for t in raw_data]
+    y_train = [t[1] for t in raw_data]
 
     # Train the model
     model.fit(x_train, y_train)
@@ -51,17 +51,18 @@ def gen_linear_regression(occurences: NeighbourhoodCrimeOccurrences, month: int,
 
 #         # Show the figure in the browser
 #         fig.show()
-def gen_error(occurences: NeighbourhoodCrimeOccurrences, month: int, include: list[int],
+def gen_rmsd(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences, month: int, include: tuple[int, int],
               model: LinearRegression) -> float:
-    """Return the error of the linear regression given the month of the data
+    """Return the RMSD of the linear regression given the month of the data
     and years that should be excluded from the calculation.
-    Thus method uses the RMSE."""
+
+    RMSD is the standard deviation of the residuals around a regression line.
+    """
     squared_sum, count = 0, 0
 
-    for x, y in occurences.get_occurrences(month):
-        if x in include:
-            squared_sum += (y - model.predict(x)) ** 2
-            count += 1
+    for (year, num_occurrences) in occurrences.get_occurrences(month, include):
+        squared_sum += (num_occurrences - model.predict([[year]])) ** 2
+        count += 1
 
     return math.sqrt(squared_sum / count)
 
@@ -85,14 +86,16 @@ def gen_z(observation: float, prediction: float, standard_deviation: float) -> t
     >>> math.isclose(z2, 0.22) and overestimated2
     True
     """
+    z = 0
     # Whether or not the observation was overestimated
     overestimated = False
 
     # How far off the prediction was from the observation
     deviation = observation - prediction
 
-    # Calculate z, how many standard deviations off the prediction was.
-    z = abs(deviation) / standard_deviation
+    # If there is standard deviation, calculate z, how many standard deviations off the prediction was.
+    if standard_deviation > 0:
+        z = abs(deviation) / standard_deviation
 
     # if the observation is less than the prediction...
     if observation < prediction:

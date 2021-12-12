@@ -26,10 +26,13 @@ def build_crime_data_class(path: str, col_num_crime_type: int,
     pre_processed_data = pd.read_csv(path)
     post_processing_data = CrimeData()
 
+    # useful for first pass through when building the csv
     if col_num_occurences is None:
         for _, row in pre_processed_data.iterrows():
             post_processing_data.increment_crime(row[col_num_crime_type], row[col_num_neighbourhood],
                                                  row[col_num_year], row[col_num_month], 1)
+
+    # useful for second pass through when reading data
     else:
         for _, row in pre_processed_data.iterrows():
             post_processing_data.increment_crime(row[col_num_crime_type], row[col_num_neighbourhood],

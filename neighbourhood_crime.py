@@ -26,16 +26,14 @@ class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
     """
     occurrences: dict[int, dict[int, int]]
 
-    def __init__(self, neighbourhood: str, crime_type: str, occurrences=None) -> None:
+    def __init__(self, neighbourhood: str, crime_type: str) -> None:
         """Initialize this NeighbourhoodCrimeOccurrences object with the neighbourhood, crime_type,
         optionally, the occurrences data.
+
         """
         NeighbourhoodCrime.__init__(self, neighbourhood=neighbourhood, crime_type=crime_type)
 
-        if occurrences is None:
-            self.occurrences = {}
-        else:
-            self.occurrences = occurrences
+        self.occurrences = {}
 
     def set_data(self, year: int, month: int, occurrences: int) -> None:
         """Add a record of the number of occurrences of the crime in a given month and year.
@@ -56,14 +54,20 @@ class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
         else:
             self.occurrences[year][month] += occurrences
 
-    def get_occurrences(self, month: int) -> list[tuple[int, int]]:
+    def get_occurrences(self, month: int, years_to_get: tuple[int, int]) -> list[tuple[int, int]]:
         """Get the number of occurrences of the crime for each year in the given month. Formatted
         as a list of tuples in the form (year, occurrences).
         """
-        data = []
-        for year in self.occurrences:
-            data.append((year, self.occurrences[year][month]))
-        return data
+        month_data = []
+        for year in range(years_to_get[0], years_to_get[1] + 1):
+            # if this year has data for this month
+            if month in self.occurrences[year]:
+                # add the month's data to the month_data list
+                month_data.append((year, self.occurrences[year][month]))
+        return month_data
+
+
+import stat_analysis
 
 
 class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
@@ -76,10 +80,10 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
         - 100 represents an unexpected increase in crime
         - 0 represents expected
     """
-    p_index_dict: dict[int, dict[int, int]]
+    p_index_dict: dict[int, dict[int, float]]
 
     def __init__(self, neighbourhood: str, crime_type: str,
-                 neighbourhood_crime_occurences: NeighbourhoodCrimeOccurrences, fit_range: tuple[int, int],
+                 neighbourhood_crime_occurrences: NeighbourhoodCrimeOccurrences, fit_range: tuple[int, int],
                  predict_range: tuple[int, int]) -> None:
         """Initialize this NeighbourhoodCrimePIndex object with the neighbourhood, crime_type and build the
         p_index_dict using the neighbourhood_crime_occurrences data, fit_range and predict_range.
@@ -99,13 +103,18 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
 
         self.p_index_dict = {}
 
-        # Loop through the months
-        # gen linear regression model
-        # gen error
-        # gen z
-        # gen p
-        # gen index
-        # update p_index dict
+        for month in range(1, 12 + 1):
+            month_model = stat_analysis.gen_linear_regression(neighbourhood_crime_occurrences, month, fit_range)
+            rmsd = stat_analysis.gen_rmsd(neighbourhood_crime_occurrences, month, fit_range, month_model)
+            for year in range(predict_range[0], predict_range[1] + 1):
+                if month in neighbourhood_crime_occurrences.occurrences[year]:
+                    z = stat_analysis.gen_z(neighbourhood_crime_occurrences.occurrences[year][month],
+                              month_model.predict([[year]]), rmsd)
+                    p = stat_analysis.gen_p(z[0])
+                    p_index = stat_analysis.gen_pindex(p, z[1])
+                    if year not in self.p_index_dict:
+                        self.p_index_dict[year] = {}
+                    self.p_index_dict[year][month] = p_index
 
     def create_list_of_range(self, start: int, end: int) -> list[int]:
         """Creates a list of consecutive integers from start to end inclusive.
@@ -126,7 +135,7 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
             self.p_index_dict[year] = {}
         self.p_index_dict[year][month] = p_index
 
-    def get_data(self, year: int, month: int) -> int:
+    def get_data(self, year: int, month: int) -> float:
         """Returns p-index of a given year and month
         """
         return self.p_index_dict[year][month]

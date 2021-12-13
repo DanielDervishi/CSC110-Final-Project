@@ -30,9 +30,10 @@ class CrimeData:
         """Increments the number of crime occurrences of a specific type in a specific neighbourhood in the
         given year and month by a specified amount.
 
-        If the crime or neighbourhood has not been entered before, they are added into the crime_occurrences dictionary
-        and the NeighbourhoodCrimeOccurrences dictionary that maps year and month to number of occurrences is
-        initialized so that all values are zero.
+        If the crime or neighbourhood has not been entered before, they are added into the
+        crime_occurrences dictionary
+        and the NeighbourhoodCrimeOccurrences object that contains a dictionary that maps year and
+        month to number of occurrences is initialized so that all values are zero.
 
         Preconditions:
             - year >= 1
@@ -56,10 +57,11 @@ class CrimeData:
         each of these years and months set to zero.
 
         Preconditions:
-            - Do not fill gaps that are not within the timeframe the data was collected. Only
-            (2003, 01) - (2021, 11) can be filled in our case.
             - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
         datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
+
+        Only fill gaps that are within the timeframe the data was collected. Only
+        (2003, 01) - (2021, 11) can be filled in our case.
         """
         for crime in self.crime_occurrences.values():
             for neighbourhood in crime.values():
@@ -71,10 +73,12 @@ class CrimeData:
 
         Preconditions:
             - fit_range[1] < predict_range[0]
-            - each crime and neighbourhood contains contiguous occurrences data from the beginning of the fit range
-            to the end of the fit range inclusive.
-            - for all crimes and neighbourhoods, all months within predict_range in the occurrences data must contain
-            entries.
+
+        Each crime and neighbourhood contains contiguous occurrences data from the beginning of the
+        fit range to the end of the fit range inclusive.
+
+        For all crimes and neighbourhoods as well as all months within predict_range in the
+        occurrences data must contain entries.
         """
         for crime_type in self.crime_occurrences:
             for neighbourhood in self.crime_occurrences[crime_type]:
@@ -157,6 +161,7 @@ def set_null_in_range_to_zero(start_year_month: tuple[int, int], end_year_month:
         if date_so_far.month not in occurrences_dict[date_so_far.year]:
             occurrences_dict[date_so_far.year][date_so_far.month] = 0
         date_so_far += relativedelta.relativedelta(months=1)
+
 
 if __name__ == '__main__':
     import doctest

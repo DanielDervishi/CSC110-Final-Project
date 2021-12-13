@@ -4,7 +4,6 @@ Martin and Daniel
 """
 import math
 from sklearn.linear_model import LinearRegression
-import neighbourhood_crime
 
 
 def gen_linear_regression(raw_data: list[tuple[int, int]]) -> LinearRegression:

@@ -10,8 +10,8 @@ from dash import html
 
 
 def generate_heatmap(data: CrimeData) -> None:
-    """Generate an animated heatmap for the pindexes of the crime over time given the CrimeData,
-    data."""
+    """Generate an animated heatmap for the pindexes of the CrimeData,
+    data, with a dropdown menu to switch between crime type."""
     # open the geojson file of the neighbourhood boundaries
     with open('local-area-boundary.geojson') as file:
         regions = json.load(file)
@@ -23,6 +23,7 @@ def generate_heatmap(data: CrimeData) -> None:
                        'p-index': unpacked_data[2],
                        'crime-type': unpacked_data[3]})
 
+    # extract a list containing the names of all crime types
     crime_types = list(data.crime_pindex.keys())
 
     # Create a dash app with a dropdown menu so that we can switch between graphs
@@ -40,7 +41,7 @@ def generate_heatmap(data: CrimeData) -> None:
         dash.dependencies.Output('choropleth-graph', 'figure'),
         [dash.dependencies.Input('crime-type-dropdown', 'value')])
     def update_output(crime: str):
-        """Updates which graph is shown in our app."""
+        """Update which graph is shown in our app by returning the pertinent figure."""
         fig = px.choropleth_mapbox(df[df['crime-type'] == crime], geojson=regions,
                                    locations='region',
                                    color='p-index',
@@ -58,24 +59,34 @@ def generate_heatmap(data: CrimeData) -> None:
         fig.update_layout(title=f'<b>P-index graph for {crime}</b>')
         return fig
 
+    # start the dash server (port will be printed in console automatically)
     app.run_server()
 
 
 def unpack_data(data: CrimeData) -> tuple[list[str], list[str], list[float], list[str]]:
     """Unpack the data in CrimeData into three lists, one corresponding to the dates, one to the
-    regions, and one to the pindexes."""
+    regions, one to the pindexes, and one for the crime types.
+    
+    (It's hard to create a doctest because the CrimeData object cannot be created/built simply)
+    """
     dates = []
     regions = []
     pindexes = []
     crime_types = []
 
+    # loop through every crime type
     for crime in data.crime_pindex:
+        # loop through each NeighbourhoodPIndex object
         for obj in data.crime_pindex[crime].values():
+            # get all the years in chronological order
             years = sorted(list(obj.p_index_dict.keys()))
+            
             for year in years:
+                # get all the months in order
                 months = list(obj.p_index_dict[year].keys())
-                # print(months)
+                
                 for month in months:
+                    # append the pertinent data to the lists
                     dates.append(month_year_to_str(month, year))
                     regions.append(obj.neighbourhood)
                     pindexes.append(obj.get_data(year, month))
@@ -85,7 +96,11 @@ def unpack_data(data: CrimeData) -> tuple[list[str], list[str], list[float], lis
 
 
 def month_year_to_str(month: int, year: int) -> str:
-    """Given the month and year as ints, return the datestring in the form 'month year'"""
-
+    """Given the month and year as ints, return the datestring in the form 'month year'
+    (months are indexed starting at 1).
+    
+    >>> month_year_to_str(10, 2021)
+    Oct 2021
+    """
     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     return f'{months[month - 1]} {year}'

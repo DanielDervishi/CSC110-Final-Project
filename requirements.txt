@@ -1,6 +1,13 @@
+# data analysis and manipulation
 sklearn
 numpy
-plotly
 pandas
 geopandas
+
+# data visualization
+plotly
 dash
+
+# testing and debugging
+python_ta
+doctest

@@ -2,6 +2,8 @@
 David, Daniel, Martin
 """
 
+import stat_analysis
+
 
 class NeighbourhoodCrime:
     """A record of crime data of a specific crime for a given neighbourhood.
@@ -91,9 +93,6 @@ class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
         return month_data
 
 
-import stat_analysis
-
-
 class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
     """
     Stores p-index in a neighbourhood for a certain crime in a given year and month.
@@ -137,10 +136,9 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
         self.p_index_dict = {}
 
         for month in range(1, 12 + 1):
-            month_model = stat_analysis.gen_linear_regression(neighbourhood_crime_occurrences,
-                                                              month, fit_range)
-            rmsd = stat_analysis.gen_rmsd(neighbourhood_crime_occurrences, month, fit_range,
-                                          month_model)
+            monthly_occurrences = neighbourhood_crime_occurences.get_occurrences(month, fit_range)
+            month_model = stat_analysis.gen_linear_regression(monthly_occurrences)
+            rmsd = stat_analysis.gen_rmsd(monthly_occurrences, month_model)
 
             for year in range(predict_range[0], predict_range[1] + 1):
 

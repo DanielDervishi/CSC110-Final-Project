@@ -2,13 +2,13 @@
 statistical analysis
 Martin and Daniel
 """
-import neighbourhood_crime
-from sklearn.linear_model import LinearRegression
 import math
+from sklearn.linear_model import LinearRegression
+import neighbourhood_crime
 
 
-def gen_linear_regression(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences, month: int,
-                          include: tuple[int, int]) -> LinearRegression:
+def gen_linear_regression(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences,
+                          month: int, include: tuple[int, int]) -> LinearRegression:
     """Print the linear regression for this data for the given month."""
     # Initialize the model
     model = LinearRegression()
@@ -23,8 +23,8 @@ def gen_linear_regression(occurrences: neighbourhood_crime.NeighbourhoodCrimeOcc
     return model
 
 
-def gen_rmsd(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences, month: int, include: tuple[int, int],
-              model: LinearRegression) -> float:
+def gen_rmsd(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences, month: int,
+             include: tuple[int, int], model: LinearRegression) -> float:
     """Return the RMSD of the linear regression given the month of the data
     and years that should be excluded from the calculation.
 
@@ -65,7 +65,8 @@ def gen_z(observation: float, prediction: float, standard_deviation: float) -> t
     # How far off the prediction was from the observation
     deviation = observation - prediction
 
-    # If there is standard deviation, calculate z, how many standard deviations off the prediction was.
+    # If there is standard deviation, calculate z, how many standard deviations off the prediction
+    # was.
     if standard_deviation > 0:
         z = abs(deviation) / standard_deviation
 
@@ -127,3 +128,22 @@ def gen_pindex(p: float, overestimated: bool) -> float:
         pindex *= -1
 
     return pindex
+
+
+if __name__ == '__main__':
+    import doctest
+
+    doctest.testmod()
+
+    import python_ta
+
+    python_ta.check_all(config={
+        'extra-imports': ['neighbourhood_crime', 'sklearn.linear_model', 'math'],
+        'max-line-length': 100,
+        'disable': ['R1705', 'C0200']
+    })
+
+    import python_ta.contracts
+
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()

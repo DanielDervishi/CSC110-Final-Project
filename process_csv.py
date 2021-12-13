@@ -1,9 +1,9 @@
 """ Daniel Dervishi
 Processes the csv for faster computations.
 """
-from crime_data import CrimeData
-import pandas as pd
 import datetime
+import pandas as pd
+from crime_data import CrimeData
 
 
 def get_vancouver_data(path: str, start_year_month: tuple[int, int],
@@ -42,9 +42,9 @@ def create_csv(raw_path: str, processed_path: str, necessary_columns: list,
 
     Code used to create 'crime_data_vancouver.csv'. CAUTION: This will cause crime_data_vancouver
     to be updated.
-    >>> create_csv('./pre-processed-crime-data-vancouver.csv', './crime_data_vancouver.csv',\
-    ['TYPE','NEIGHBOURHOOD', 'YEAR', 'MONTH'], fill_gaps=True, start_year_month=(2003,1), \
-    end_year_month=(2021,11))
+    # >>> create_csv('./pre-processed-crime-data-vancouver.csv', './crime_data_vancouver.csv',\
+    # ['TYPE','NEIGHBOURHOOD', 'YEAR', 'MONTH'], fill_gaps=True, start_year_month=(2003,1), \
+    # end_year_month=(2021,11))
     """
     # filter to only include necessary columns
     df = pd.read_csv(raw_path, usecols=necessary_columns)
@@ -102,18 +102,17 @@ def dataframe_to_crime_data(df: pd.DataFrame, col_num_crime_type: int, col_num_n
     """
     Creates a CrimeData object using a pandas dataframe with all data that is available in the
     specified time frame.
-    
+
     The dataframe must contain a corresponding column to each variables with the col_num prefix.
     Each variable with the prefix col_num must have a unique value.
     Each variable with the prefix col_num must be assigned to the column number that has the
     corresponding title in the dataframe.
-    
+
     Preconditions:
         - len({col_num_crime_type, col_num_neighbourhood, col_num_year, col_num_month, \
         col_num_occurrences}) == 5
         - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
         datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
-        
     """
     crime_data = CrimeData()
     for _, row in df.iterrows():
@@ -132,6 +131,15 @@ def date_in_range(start_year_month: tuple[int, int],
     Preconditions:
         - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
         datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
+
+    >>> date_in_range((2003,1), (2003,1), (2003, 1))
+    True
+
+    >>> date_in_range((2003,1), (2003, 11), (2003,12))
+    False
+
+    >>> date_in_range((2003,1), (2003, 11), (2003,2))
+    True
     """
     start = datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
     end = datetime.date(year=end_year_month[0], month=end_year_month[1], day=1)

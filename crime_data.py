@@ -1,16 +1,17 @@
 """A class to store all crime data for CSC110 final project.
 Daniel, Martin
 """
-from neighbourhood_crime import NeighbourhoodCrimePIndex, NeighbourhoodCrimeOccurrences
 import datetime
 from dateutil import relativedelta
+from neighbourhood_crime import NeighbourhoodCrimePIndex, NeighbourhoodCrimeOccurrences
 
 
 class CrimeData:
     """Aggregation of neighbourhood crime data objects.
 
     Instance Attributes:
-        - crime_occurrences: dict mapping crime type to dict of neighbourhood crime occurrences objects.
+        - crime_occurrences: dict mapping crime type to dict of neighbourhood crime occurrences
+        objects.
         - crime_pindex: dict mapping crime type to dict of neighbourhood crime p-index objects.
     """
 
@@ -19,16 +20,17 @@ class CrimeData:
 
     def __init__(self) -> None:
         """
-        Initializes the CrimeData object with attributes crime_occurrences: empty dict and crime_pindex:
-        empty dict.
+        Initializes the CrimeData object with attributes crime_occurrences: empty dict and
+        crime_pindex: empty dict.
         """
 
         self.crime_occurrences = {}
         self.crime_pindex = {}
 
-    def increment_crime(self, crime: str, neighbourhood: str, year: int, month: int, occurrences: int) -> None:
-        """Increments the number of crime occurrences of a specific type in a specific neighbourhood in the
-        given year and month by a specified amount.
+    def increment_crime(self, crime: str, neighbourhood: str, year: int, month: int,
+                        occurrences: int) -> None:
+        """Increments the number of crime occurrences of a specific type in a specific neighbourhood
+        in the given year and month by a specified amount.
 
         If the crime or neighbourhood has not been entered before, they are added into the
         crime_occurrences dictionary
@@ -50,11 +52,11 @@ class CrimeData:
 
         self.crime_occurrences[crime][neighbourhood].increment_data(year, month, occurrences)
 
-    def fill_gaps(self, start_year_month: tuple[int, int], end_year_month: tuple[int, int]):
+    def fill_gaps(self, start_year_month: tuple[int, int], end_year_month: tuple[int, int]) -> None:
         """
-        For each crime and neighbourhood, the years and months that have no occurrences within the range
-        specified as start_year_month - end_year_month have the value of the occurrences dictionary at
-        each of these years and months set to zero.
+        For each crime and neighbourhood, the years and months that have no occurrences within the
+        range specified as start_year_month - end_year_month have the value of the occurrences
+        dictionary at each of these years and months set to zero.
 
         Preconditions:
             - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
@@ -65,9 +67,11 @@ class CrimeData:
         """
         for crime in self.crime_occurrences.values():
             for neighbourhood in crime.values():
-                set_null_in_range_to_zero(start_year_month, end_year_month, neighbourhood.occurrences)
+                set_null_in_range_to_zero(start_year_month, end_year_month,
+                                          neighbourhood.occurrences)
 
-    def create_pindex_data(self, fit_range: tuple[int, int], predict_range: tuple[int, int]) -> None:
+    def create_pindex_data(self, fit_range: tuple[int, int],
+                           predict_range: tuple[int, int]) -> None:
         """
         Creates all the data that goes into the p-index dict.
 
@@ -89,64 +93,24 @@ class CrimeData:
                                              self.crime_occurrences[crime_type][neighbourhood],
                                              fit_range, predict_range)
 
-    def average_pindexes(self) -> float:
-        """
-        Returns average of the absolute value of all p-indexes
-        """
-        sum = 0
-        count = 0
-        for crime in self.crime_pindex.values():
-            for neighbourhood in crime.values():
-                for year in neighbourhood.p_index_dict:
-                    for p_value in neighbourhood.p_index_dict[year].values():
-                        sum += p_value
-                        count += 1
-        return sum/count
 
-    def average_per_crime_pindexes(self) -> list[tuple[str, float]]:
-        """
-        Returns average of the absolute value of all p-indexes
-        """
-        sum = 0
-        count = 0
-        p_value_list = []
-        for crime in self.crime_pindex:
-            for neighbourhood in self.crime_pindex[crime].values():
-                for year in neighbourhood.p_index_dict:
-                    for p_value in neighbourhood.p_index_dict[year].values():
-                        sum += p_value
-                        count += 1
-            p_value_list.append((crime, sum / count))
-            sum = 0
-            count = 0
-        return p_value_list
-
-    def average_per_crime_per_neighbourhood_pindexes(self) -> dict[str, list[tuple[str, float]]]:
-        """
-        Returns average of the absolute value of all p-indexes
-        """
-        sum = 0
-        count = 0
-        p_value_dict = {}
-        for crime in self.crime_pindex:
-            for neighbourhood in self.crime_pindex[crime].values():
-                for year in neighbourhood.p_index_dict:
-                    for p_value in neighbourhood.p_index_dict[year].values():
-                        sum += p_value
-                        count += 1
-                if crime not in p_value_dict:
-                    p_value_dict[crime] = []
-                p_value_dict[crime].append((neighbourhood.neighbourhood, sum / count))
-                sum = 0
-                count = 0
-        return p_value_dict
-
-
-def set_null_in_range_to_zero(start_year_month: tuple[int, int], end_year_month: tuple[int, int], occurrences_dict: dict[int, dict[int, int]]) -> None:
+def set_null_in_range_to_zero(start_year_month: tuple[int, int], end_year_month: tuple[int, int],
+                              occurrences_dict: dict[int, dict[int, int]]) -> None:
     """
     Mutates the occurrences dictionary by setting values to zero for each year and month
     within a specified range (start_year_month, end_year_month) (inclusive) where that month
     and year does not already have a value for occurrences.
+
+    >>> test_dict = {}
+    >>> set_null_in_range_to_zero((2003,1),(2003,4), test_dict)
+    >>> test_dict == {2003: {1: 0, 2 : 0, 3 : 0, 4: 0}}
+    True
+
+    >>> test_dict = {2003: {1: 10, 2: 5}}
+    >>> set_null_in_range_to_zero((2003,1), (2003,4), test_dict)
+    >>> test_dict == {2003: {1: 10, 2 : 5, 3 : 0, 4: 0}}
+    True
+
     """
     start_date = datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
     end_date = datetime.date(year=end_year_month[0], month=end_year_month[1], day=1)
@@ -166,14 +130,12 @@ def set_null_in_range_to_zero(start_year_month: tuple[int, int], end_year_month:
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
-    
     import python_ta
     python_ta.check_all(config={
         'extra-imports': ['datetime', 'dateutil', 'neighbourhood_crime'],
         'max-line-length': 100,
         'disable': ['R1705', 'C0200']
     })
-    
     import python_ta.contracts
     python_ta.contracts.DEBUG_CONTRACTS = False
     python_ta.contracts.check_all_contracts()

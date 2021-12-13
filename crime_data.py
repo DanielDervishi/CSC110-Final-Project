@@ -17,18 +17,13 @@ class CrimeData:
     crime_occurrences: dict[str, dict[str, NeighbourhoodCrimeOccurrences]]
     crime_pindex: dict[str, dict[str, NeighbourhoodCrimePIndex]]
 
-    def __init__(self, crime_data_param=None) -> None:
+    def __init__(self) -> None:
         """
-        Initializes the CrimeData object with crime_occurrences set to crime_data_param if entered or with empty dict
-        otherwise.
+        Initializes the CrimeData object with attributes crime_occurrences: empty dict and crime_pindex:
+        empty dict.
+        """
 
-        Parameters:
-            - crime_data_param: initial value of crime_occurrences
-        """
-        if crime_data_param is None:
-            self.crime_occurrences = {}
-        else:
-            self.crime_occurrences = crime_data_param
+        self.crime_occurrences = {}
         self.crime_pindex = {}
 
     def increment_crime(self, crime: str, neighbourhood: str, year: int, month: int, occurrences: int) -> None:
@@ -45,6 +40,11 @@ class CrimeData:
         Parameter:
             - start_year_month: tuple(int, int) in the form (year, month) where 1 <= month <= 12
             - end_year_month: tuple(int, int) in the form (year, month) where 1 <= month <= 12
+
+        Preconditions:
+            - year >= 1
+            - 1 <= month <= 12
+            - occurrences >= 1
         """
         if crime not in self.crime_occurrences:
             self.crime_occurrences[crime] = {}
@@ -61,6 +61,12 @@ class CrimeData:
         For each crime and neighbourhood, the years and months that have no occurrences within the range
         specified as start_year_month - end_year_month have the value of the occurrences dictionary at
         each of these years and months set to zero.
+
+        Preconditions:
+            - Do not fill gaps that are not within the timeframe the data was collected. Only
+            (2003, 01) - (2021, 11) can be filled in our case.
+            - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
+        datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
         """
         for crime in self.crime_occurrences.values():
             for neighbourhood in crime.values():
@@ -69,6 +75,13 @@ class CrimeData:
     def create_pindex_data(self, fit_range: tuple[int, int], predict_range: tuple[int, int]) -> None:
         """
         Creates all the data that goes into the p-index dict.
+
+        Preconditions:
+            - fit_range[1] < predict_range[0]
+            - each crime and neighbourhood contains contiguous occurrences data from the beginning of the fit range
+            to the end of the fit range inclusive.
+            - for all crimes and neighbourhoods, all months within predict_range in the occurrences data must contain
+            entries.
         """
         for crime_type in self.crime_occurrences:
             for neighbourhood in self.crime_occurrences[crime_type]:

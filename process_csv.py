@@ -9,17 +9,35 @@ import datetime
 def get_vancouver_data(path: str, start_year_month: tuple[int, int], end_year_month: tuple[int, int]) -> CrimeData:
     """
     Return data formatted using CrimeData from crime_data_vancouver.csv.
+    Data lies within the range start_year_month and end_year_month inclusive.
+    Data from path must exist for all months between start_year_month and end_year_month inclusive.
+
+    Preconditions:
+        - Only to be called using a file path that was built using create_csv.
+        - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
+        datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
     """
     df = pd.read_csv(path)
     return dataframe_to_crime_data(df, 0, 1, 2, 3, 4, start_year_month, end_year_month)
 
 
-def create_csv(raw_path: str, processed_path: str, necessary_columns: list, remove_nan=True, fill_gaps=False,
-                 start_year_month=None, end_year_month=None) -> None:
+def create_csv(raw_path: str, processed_path: str, necessary_columns: list, start_year_month: tuple[int, int],
+               end_year_month: tuple[int, int], remove_nan=True, fill_gaps=False) -> None:
     """
-    code to create a new csv
+    Converts pre-processed-crime-data-vancouver.csv to a proccessed data frame with path processed_path.
+    User can specify if they want gaps in data filled.
+    User must specify the range of the data that they would like to collect.
+    The range of the data must be within the time frame that the data was collected. In our case from
+    (2003, 1) to (2021, 11) inclusive.
+
+    Preconditions:
+        - raw path is './pre-processed-crime-data-vancouver.csv'
+        - necessary_columns == ['TYPE','NEIGHBOURHOOD', 'YEAR', 'MONTH']
+
+    Code used to create 'crime_data_vancouver.csv'.
     >>> create_csv('./pre-processed-crime-data-vancouver.csv', './crime_data_vancouver.csv',\
     ['TYPE','NEIGHBOURHOOD', 'YEAR', 'MONTH'], fill_gaps=True, start_year_month=(2003,1), end_year_month=(2021,11))
+
 
     """
     # filter to only include necessary columns
@@ -36,9 +54,7 @@ def create_csv(raw_path: str, processed_path: str, necessary_columns: list, remo
     df = dataframe_to_crime_data(df, 0, 1, 2, 3, 4, start_year_month, end_year_month)
 
     # fill in values that have no occurrences
-    if start_year_month is None or end_year_month is None and fill_gaps:
-        raise FillRangeNotSpecifiedError
-    elif fill_gaps:
+    if fill_gaps:
         df.fill_gaps(start_year_month, end_year_month)
 
     # convert the crimedata back into a dataframe
@@ -75,7 +91,18 @@ def dataframe_to_crime_data(df: pd.DataFrame, col_num_crime_type: int, col_num_n
                             col_num_year: int, col_num_month: int, col_num_occurrences: int,
                             start_year_month: tuple[int, int], end_year_month: tuple[int, int]) -> CrimeData:
     """
-    creates a dataframe using the crimeData whith all data availible in the specified range.
+    Creates a CrimeData object using a pandas dataframe with all data available in the specified range.
+    
+    The dataframe must contain a corresponding column to each variables with the col_num prefix.
+    Each variable with the prefix col_num must be unique.
+    Each variable with the prefix col_num must be assigned to the column number that has the corresponding title
+    in the dataframe.
+    
+    Preconditions:
+        - len({col_num_crime_type, col_num_neighbourhood, col_num_year, col_num_month, col_num_occurrences}) == 5
+        - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
+        datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
+        
     """
     crime_data = CrimeData()
     for _, row in df.iterrows():
@@ -86,17 +113,13 @@ def dataframe_to_crime_data(df: pd.DataFrame, col_num_crime_type: int, col_num_n
     return crime_data
 
 
-class FillRangeNotSpecifiedError(Exception):
-    """
-    When creating the csv, it was specified that user wanted to fill values between start_year_month
-    and end_year_month that did not already have values for number of occurrences with 0, but one or
-    more of these variables was not defined.
-    """
-
-
 def date_in_range(start_year_month: tuple[int, int],
                         end_year_month: tuple[int, int], date_year_month: tuple[int, int]) -> bool:
     """Checks if a date is between start_year_month and end_year_month inclusive
+
+    Preconditions:
+        - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
+        datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
     """
     start = datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
     end = datetime.date(year=end_year_month[0], month=end_year_month[1], day=1)

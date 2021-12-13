@@ -23,13 +23,17 @@ class NeighbourhoodCrime:
 class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
     """
     Stores number of crime occurrences in a neighbourhood for a certain crime in a given year and month.
+
+    Instance Attributes:
+        - occurrences: maps year to a dictionary of months and the dictionary of months maps to the number of
+        crime occurrences in this month.
+    Representation Invariants:
+        - all(occurrences >= 0 for month_dict in self.occurrences.values() for occurrences in month_dict.values())
     """
     occurrences: dict[int, dict[int, int]]
 
     def __init__(self, neighbourhood: str, crime_type: str) -> None:
-        """Initialize this NeighbourhoodCrimeOccurrences object with the neighbourhood, crime_type,
-        optionally, the occurrences data.
-
+        """Initialize this NeighbourhoodCrimeOccurrences object with the neighbourhood and crime type
         """
         NeighbourhoodCrime.__init__(self, neighbourhood=neighbourhood, crime_type=crime_type)
 
@@ -39,13 +43,27 @@ class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
         """Add a record of the number of occurrences of the crime in a given month and year.
 
         If there was already data for that year and month, it will be overridden.
+
+        Preconditions:
+            - year >= 0
+            - 1 <= month <= 12
+            - occurrences >= 1
         """
         if year not in self.occurrences:
             self.occurrences[year] = {}
         self.occurrences[year][month] = occurrences
 
     def increment_data(self, year: int, month: int, occurrences: int) -> None:
-        """Increment the number of occurrences in the given year and month by occurrences."""
+        """Increment the number of occurrences in the given year and month by occurrences.
+
+        If occurrences currently does not map year to a dictionary of months or if there is no value mapping
+        month to number of occurrences, the occurrences dict is updated to be able to store the new data.
+
+        Preconditions:
+            - year >= 0
+            - 1 <= month <= 12
+            - occurrences >= 1
+        """
         if year not in self.occurrences:
             self.occurrences[year] = {}
 
@@ -60,8 +78,10 @@ class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
         """
         month_data = []
         for year in range(years_to_get[0], years_to_get[1] + 1):
+
             # if this year has data for this month
             if month in self.occurrences[year]:
+
                 # add the month's data to the month_data list
                 month_data.append((year, self.occurrences[year][month]))
         return month_data
@@ -79,6 +99,13 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
         - -100 represents an unexpected decrease in crime
         - 100 represents an unexpected increase in crime
         - 0 represents expected
+
+    Instance Attributes:
+        - p_index_dict: dictionary that maps a specific year to a dictionary of months which map to the p-value associated
+        with this month.
+
+    Preconditions:
+        - all(-100 < p_value < 100 for month_dict in self.occurrences.values() for p_value in month_dict.values())
     """
     p_index_dict: dict[int, dict[int, float]]
 
@@ -93,11 +120,10 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
             - predict_range: range of years to make predictions with the model
 
         Preconditions
-            - fit_range[1] < predict_range[0]
-
-        Predict range starts after the fit range.
-
-        ADD PRECONDITIONS
+            - fit_range[1] < predict_range[0] (Predict range starts after the fit range.)
+            - neighbourhood_crime_occurrences contains contiguous data from the beginning of the fit range
+            to the end of the fit range.
+            - all months within predict_range in neighbourhood_crime_occurrences must contain entries.
         """
         NeighbourhoodCrime.__init__(self, neighbourhood=neighbourhood, crime_type=crime_type)
 
@@ -106,36 +132,27 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
         for month in range(1, 12 + 1):
             month_model = stat_analysis.gen_linear_regression(neighbourhood_crime_occurrences, month, fit_range)
             rmsd = stat_analysis.gen_rmsd(neighbourhood_crime_occurrences, month, fit_range, month_model)
+
             for year in range(predict_range[0], predict_range[1] + 1):
+
                 if month in neighbourhood_crime_occurrences.occurrences[year]:
+
                     z = stat_analysis.gen_z(neighbourhood_crime_occurrences.occurrences[year][month],
                               month_model.predict([[year]]), rmsd)
+
                     p = stat_analysis.gen_p(z[0])
+
                     p_index = stat_analysis.gen_pindex(p, z[1])
+
                     if year not in self.p_index_dict:
                         self.p_index_dict[year] = {}
                     self.p_index_dict[year][month] = p_index
 
-    def create_list_of_range(self, start: int, end: int) -> list[int]:
-        """Creates a list of consecutive integers from start to end inclusive.
-        """
-        lst = []
-
-        for i in range(start, end + 1):
-            lst.append(i)
-
-        return lst
-
-    def set_data(self, year: int, month: int, p_index: int) -> None:
-        """Record p_index of a given year and month.
-
-        If there was already data for that year and month, it will be overridden.
-        """
-        if year not in self.p_index_dict:
-            self.p_index_dict[year] = {}
-        self.p_index_dict[year][month] = p_index
-
     def get_data(self, year: int, month: int) -> float:
         """Returns p-index of a given year and month
+
+        Preconditions:
+            - year >= 0
+            - 1 <= month <= 12
         """
         return self.p_index_dict[year][month]

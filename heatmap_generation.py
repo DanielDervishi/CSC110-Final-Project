@@ -76,7 +76,7 @@ def unpack_data(data: CrimeData) -> tuple[list[str], list[str], list[float], lis
 
     # loop through every crime type
     for crime in data.crime_pindex:
-        # loop through each NeighbourhoodPIndex object
+        # loop through each NeighbourhoodCrimePIndex object
         for obj in data.crime_pindex[crime].values():
             # get all the years in chronological order
             years = sorted(list(obj.p_index_dict.keys()))

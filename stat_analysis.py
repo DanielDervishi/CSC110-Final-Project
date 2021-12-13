@@ -7,13 +7,11 @@ from sklearn.linear_model import LinearRegression
 import neighbourhood_crime
 
 
-def gen_linear_regression(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences,
-                          month: int, include: tuple[int, int]) -> LinearRegression:
+def gen_linear_regression(raw_data: list[tuple[int, int]]) -> LinearRegression:
     """Print the linear regression for this data for the given month."""
     # Initialize the model
     model = LinearRegression()
 
-    raw_data = occurrences.get_occurrences(month, include)
     x_train = [[t[0]] for t in raw_data]
     y_train = [t[1] for t in raw_data]
 
@@ -23,8 +21,7 @@ def gen_linear_regression(occurrences: neighbourhood_crime.NeighbourhoodCrimeOcc
     return model
 
 
-def gen_rmsd(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences, month: int,
-             include: tuple[int, int], model: LinearRegression) -> float:
+def gen_rmsd(occurrences: list[tuple[int, int]], model: LinearRegression) -> float:
     """Return the RMSD of the linear regression given the month of the data
     and years that should be excluded from the calculation.
 
@@ -32,7 +29,7 @@ def gen_rmsd(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences, mon
     """
     squared_sum, count = 0, 0
 
-    for (year, num_occurrences) in occurrences.get_occurrences(month, include):
+    for (year, num_occurrences) in occurrences:
         squared_sum += (num_occurrences - model.predict([[year]])) ** 2
         count += 1
 

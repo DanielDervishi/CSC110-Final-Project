@@ -34,13 +34,6 @@ class CrimeData:
         and the NeighbourhoodCrimeOccurrences dictionary that maps year and month to number of occurrences is
         initialized so that all values are zero.
 
-        User can specify start_year_month and end_year_month if the range of dates in which data was collected is
-        different than the range provided.
-
-        Parameter:
-            - start_year_month: tuple(int, int) in the form (year, month) where 1 <= month <= 12
-            - end_year_month: tuple(int, int) in the form (year, month) where 1 <= month <= 12
-
         Preconditions:
             - year >= 1
             - 1 <= month <= 12

@@ -1,5 +1,4 @@
 """A class to store all crime data for CSC110 final project.
-Daniel, Martin
 """
 from neighbourhood_crime import NeighbourhoodCrimePIndex, NeighbourhoodCrimeOccurrences
 import datetime
@@ -31,7 +30,7 @@ class CrimeData:
             self.crime_occurrences = crime_data_param
         self.crime_pindex = {}
 
-    def increment_crime(self, crime: str, neighbourhood: str, year: int, month: int, occurrences: int) -> None:
+    def increment_crime(self, crime: str, neighbourhood: str, year: int, month: int, occurrences: int,) -> None:
         """Increments the number of crime occurrences of a specific type in a specific neighbourhood in the
         given year and month by a specified amount.
 

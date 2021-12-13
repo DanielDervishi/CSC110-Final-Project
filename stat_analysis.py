@@ -4,8 +4,6 @@ Martin and Daniel
 """
 import neighbourhood_crime
 from sklearn.linear_model import LinearRegression
-import numpy as np
-import plotly.graph_objects as go
 import math
 
 
@@ -25,32 +23,6 @@ def gen_linear_regression(occurrences: neighbourhood_crime.NeighbourhoodCrimeOcc
     return model
 
 
-#         # Print the model.
-#         print("h(x) = {} + {}*x".format(np.round(model.intercept_, 3), np.round(model.coef_[0], 3)))
-
-#         # Get points for the line
-#         lower = x_train[0][0] - 1
-#         min_val = lower * model.coef_[0] + model.intercept_
-#         upper = x_train[-1][0] + 1
-#         max_val = upper * model.coef_[0] + model.intercept_
-
-#         # Create the figure
-#         scatter1 = go.Scatter(x=[t[0] for t in raw_data], y=y_train, mode='markers',
-#                               name=f'{self.neighbourhood} occurrences', fillcolor='green')
-#         scatter2 = go.Scatter(x=[lower, upper], y=[min_val, max_val], mode='lines',
-#                               name='Linear regression')
-
-#         fig = go.Figure()
-#         fig.add_trace(scatter1)
-#         fig.add_trace(scatter2)
-
-#         # Configure the figure
-#         fig.update_layout(title=f'Linear regression of number of occurrences of {self.crime_type} '
-#                                 f'in {self.neighbourhood} in {self.month_to_str(month)}',
-#                           xaxis_title='Year', yaxis_title='Num occurrences')
-
-#         # Show the figure in the browser
-#         fig.show()
 def gen_rmsd(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences, month: int, include: tuple[int, int],
               model: LinearRegression) -> float:
     """Return the RMSD of the linear regression given the month of the data

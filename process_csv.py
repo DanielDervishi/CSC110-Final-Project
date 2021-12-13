@@ -125,3 +125,18 @@ def date_in_range(start_year_month: tuple[int, int],
     end = datetime.date(year=end_year_month[0], month=end_year_month[1], day=1)
     date = datetime.date(year=date_year_month[0], month=date_year_month[1], day=1)
     return start <= date <= end
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+    
+    import python_ta
+    python_ta.check_all(config={
+        'extra-imports': ['datetime', 'crime_data', 'pandas'],
+        'max-line-length': 100,
+        'disable': ['R1705', 'C0200']
+    })
+    
+    import python_ta.contracts
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()

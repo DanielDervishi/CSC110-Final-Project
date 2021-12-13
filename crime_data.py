@@ -157,3 +157,18 @@ def set_null_in_range_to_zero(start_year_month: tuple[int, int], end_year_month:
         if date_so_far.month not in occurrences_dict[date_so_far.year]:
             occurrences_dict[date_so_far.year][date_so_far.month] = 0
         date_so_far += relativedelta.relativedelta(months=1)
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+    
+    import python_ta
+    python_ta.check_all(config={
+        'extra-imports': ['datetime', 'dateutil', 'neighbourhood_crime'],
+        'max-line-length': 100,
+        'disable': ['R1705', 'C0200']
+    })
+    
+    import python_ta.contracts
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()

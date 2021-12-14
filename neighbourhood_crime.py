@@ -2,7 +2,7 @@
 David, Daniel, Martin
 """
 
-import stat_analysis
+from stat_analysis import gen_linear_regression, gen_rmsd, gen_z, gen_p, gen_pindex
 
 
 class NeighbourhoodCrime:
@@ -137,20 +137,20 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
 
         for month in range(1, 12 + 1):
             monthly_occurrences = neighbourhood_crime_occurences.get_occurrences(month, fit_range)
-            month_model = stat_analysis.gen_linear_regression(monthly_occurrences)
-            rmsd = stat_analysis.gen_rmsd(monthly_occurrences, month_model)
+            month_model = gen_linear_regression(monthly_occurrences)
+            rmsd = gen_rmsd(monthly_occurrences, month_model)
 
             for year in range(predict_range[0], predict_range[1] + 1):
 
                 if month in neighbourhood_crime_occurrences.occurrences[year]:
 
-                    z = stat_analysis.gen_z(
+                    z = gen_z(
                         neighbourhood_crime_occurrences.occurrences[year][month],
                         month_model.predict([[year]]), rmsd)
 
-                    p = stat_analysis.gen_p(z[0])
+                    p = gen_p(z[0])
 
-                    p_index = stat_analysis.gen_pindex(p, z[1])
+                    p_index = gen_pindex(p, z[1])
 
                     if year not in self.p_index_dict:
                         self.p_index_dict[year] = {}

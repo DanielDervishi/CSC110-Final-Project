@@ -1,5 +1,6 @@
-"""A class to store all crime data for CSC110 final project.
-Daniel, Martin
+"""
+A class to store crime data both of occurrences of certain crime types
+and pindex data for the data visualization and analysis.
 """
 import datetime
 from dateutil import relativedelta

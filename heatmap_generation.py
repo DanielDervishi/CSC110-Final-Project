@@ -1,4 +1,6 @@
-"""Generate a heatmap given p-index data."""
+"""
+Functions to generate a heatmap given p-index data in the form of a CrimeData object.
+"""
 
 import plotly.express as px
 import pandas as pd

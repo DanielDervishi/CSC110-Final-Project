@@ -210,11 +210,9 @@ def format_neighbourhood_data(neighbourhood: NeighbourhoodCrimeOccurrences,
 
 if __name__ == '__main__':
     import doctest
-
     doctest.testmod()
 
     import python_ta
-
     python_ta.check_all(config={
         'extra-imports': ['datetime', 'crime_data', 'pandas', 'neighbourhood_crime'],
         'max-line-length': 100,

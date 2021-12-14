@@ -179,11 +179,9 @@ def value_in_dict(key: int, dictionary: dict) -> None:
 
 if __name__ == '__main__':
     import doctest
-
     doctest.testmod()
 
     import python_ta
-
     python_ta.check_all(config={
         'extra-imports': ['stat_analysis'],
         'max-line-length': 100,

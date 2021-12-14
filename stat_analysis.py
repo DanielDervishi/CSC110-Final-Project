@@ -42,10 +42,10 @@ def gen_z(observation: float, prediction: float, standard_deviation: float) -> t
      deviations off the prediction was from the actual value)
      - Whether or not the model overestimated the result (meaning the actual value is
      less than the predicted value).
-     
      observation: the actual value
      prediction: the predicted value
-     standard_deviation: the standard deviation of an actual value from the corresponding predicted value
+     standard_deviation: the standard deviation of an actual value from the corresponding predicted
+     value
 
      Preconditions:
         - standard_deviation > 0
@@ -83,7 +83,6 @@ def gen_p(z: float) -> float:
     Generates p, the probability that the model would have predicted a result as least as extreme as
     that observed. A low p value indicates a low chance the observed result would be a predicted,
     meaning the model is likely innacurate.
-    
     z: the z value to compute the p value of
 
     Preconditions:
@@ -100,7 +99,8 @@ def gen_p(z: float) -> float:
     >>> math.isclose(p3 * 100, 100 - 99.74, abs_tol=0.05)
     True
     """
-    #compute p using twice (times 2) the complimentary cumulative function
+
+    # compute p using twice (times 2) the complimentary cumulative function
     p = 1 - math.erf(z / (2 ** (1 / 2)))
 
     return p
@@ -114,18 +114,15 @@ def gen_pindex(p: float, overestimated: bool) -> float:
     to make the index more dynamic; the magnitude of the index represents the probability
     the model is innacurate, and the sign of the index represents whether the innacuracy
     is due to over or underestimation.
-    
     p: the p value for an observation that was compared against a predictive model/average
-    overestimated: whether or not the observation the p value is based off of was over or 
-    under estimated
-
+    overestimated: whether or not the observation the p value is based off of was over or under
+    estimated
     Example: a p value of 0.2 indicates there is a 20% chance the model is correct for that
     observation. Assume the observation value is less than the model's prediction.
     This means the model overestimated the observation.
     Computation: take the compliment of the p value, convert it into a percentage, and
     make it negative (due to overestimeation)
     Thus, the p index is -80.0
-    
     Preconditions:
         - 0 <= p < 1
 

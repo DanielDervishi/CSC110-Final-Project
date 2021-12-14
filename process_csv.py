@@ -1,5 +1,6 @@
-""" Daniel Dervishi
-Processes the csv for faster computations.
+"""
+A collection of functions to process a CSV file of crime data
+from the Vancouver Police Department.
 """
 import datetime
 import pandas as pd

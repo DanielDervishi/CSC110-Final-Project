@@ -100,7 +100,7 @@ def month_year_to_str(month: int, year: int) -> str:
     (months are indexed starting at 1).
     
     >>> month_year_to_str(10, 2021)
-    Oct 2021
+    'Oct 2021'
     """
     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     return f'{months[month - 1]} {year}'

@@ -3,6 +3,7 @@ sklearn
 numpy
 pandas
 geopandas
+datetime
 
 # data visualization
 plotly

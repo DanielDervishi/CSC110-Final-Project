@@ -2,18 +2,15 @@
 statistical analysis
 Martin and Daniel
 """
-import neighbourhood_crime
-from sklearn.linear_model import LinearRegression
 import math
+from sklearn.linear_model import LinearRegression
 
 
-def gen_linear_regression(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences, month: int,
-                          include: tuple[int, int]) -> LinearRegression:
+def gen_linear_regression(raw_data: list[tuple[int, int]]) -> LinearRegression:
     """Print the linear regression for this data for the given month."""
     # Initialize the model
     model = LinearRegression()
 
-    raw_data = occurrences.get_occurrences(month, include)
     x_train = [[t[0]] for t in raw_data]
     y_train = [t[1] for t in raw_data]
 
@@ -23,8 +20,7 @@ def gen_linear_regression(occurrences: neighbourhood_crime.NeighbourhoodCrimeOcc
     return model
 
 
-def gen_rmsd(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences, month: int, include: tuple[int, int],
-              model: LinearRegression) -> float:
+def gen_rmsd(occurrences: list[tuple[int, int]], model: LinearRegression) -> float:
     """Return the RMSD of the linear regression given the month of the data
     and years that should be excluded from the calculation.
 
@@ -32,7 +28,7 @@ def gen_rmsd(occurrences: neighbourhood_crime.NeighbourhoodCrimeOccurrences, mon
     """
     squared_sum, count = 0, 0
 
-    for (year, num_occurrences) in occurrences.get_occurrences(month, include):
+    for (year, num_occurrences) in occurrences:
         squared_sum += (num_occurrences - model.predict([[year]])) ** 2
         count += 1
 
@@ -46,6 +42,10 @@ def gen_z(observation: float, prediction: float, standard_deviation: float) -> t
      deviations off the prediction was from the actual value)
      - Whether or not the model overestimated the result (meaning the actual value is
      less than the predicted value).
+     
+     observation: the actual value
+     prediction: the predicted value
+     standard_deviation: the standard deviation of an actual value from the corresponding predicted value
 
      Preconditions:
         - standard_deviation > 0
@@ -65,7 +65,8 @@ def gen_z(observation: float, prediction: float, standard_deviation: float) -> t
     # How far off the prediction was from the observation
     deviation = observation - prediction
 
-    # If there is standard deviation, calculate z, how many standard deviations off the prediction was.
+    # If there is standard deviation, calculate z, how many standard deviations off the prediction
+    # was.
     if standard_deviation > 0:
         z = abs(deviation) / standard_deviation
 
@@ -82,6 +83,8 @@ def gen_p(z: float) -> float:
     Generates p, the probability that the model would have predicted a result as least as extreme as
     that observed. A low p value indicates a low chance the observed result would be a predicted,
     meaning the model is likely innacurate.
+    
+    z: the z value to compute the p value of
 
     Preconditions:
         - z >= 0
@@ -97,7 +100,7 @@ def gen_p(z: float) -> float:
     >>> math.isclose(p3 * 100, 100 - 99.74, abs_tol=0.05)
     True
     """
-    # Cite function!
+    #compute p using twice (times 2) the complimentary cumulative function
     p = 1 - math.erf(z / (2 ** (1 / 2)))
 
     return p
@@ -105,11 +108,24 @@ def gen_p(z: float) -> float:
 
 def gen_pindex(p: float, overestimated: bool) -> float:
     """
-    Generate the index based on 1 - p to measure the effect of COVID-19 on crime counts by
-    converting it into a percentage from a decimal.
+    Generate an index based on 1 - p to measure the probability the model is innacurate.
+    p values measure the probability the model is accurate, so 1 - p is the opposite.
+    Whether or not the observed value was overestimated is taken into account in order
+    to make the index more dynamic; the magnitude of the index represents the probability
+    the model is innacurate, and the sign of the index represents whether the innacuracy
+    is due to over or underestimation.
+    
+    p: the p value for an observation that was compared against a predictive model/average
+    overestimated: whether or not the observation the p value is based off of was over or 
+    under estimated
 
-    (provide example)
-
+    Example: a p value of 0.2 indicates there is a 20% chance the model is correct for that
+    observation. Assume the observation value is less than the model's prediction.
+    This means the model overestimated the observation.
+    Computation: take the compliment of the p value, convert it into a percentage, and
+    make it negative (due to overestimeation)
+    Thus, the p index is -80.0
+    
     Preconditions:
         - 0 <= p < 1
 
@@ -117,28 +133,32 @@ def gen_pindex(p: float, overestimated: bool) -> float:
     >>> math.isclose(pindex1, 90.0)
     True
 
-    >>> pindex2 = gen_pindex(0.7, True)
-    >>> math.isclose(pindex2, -30.0)
+    >>> pindex2 = gen_pindex(0.2, True)
+    >>> math.isclose(pindex2, -80.0)
     True
     """
+    # take the complimentary value of the p value and convert it into the percentage
     pindex = (1 - p) * 100
 
+    # make the p index negative if the observation it is based off of was overestimated
     if overestimated:
         pindex *= -1
 
     return pindex
 
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
-    
+
     import python_ta
     python_ta.check_all(config={
-        'extra-imports': ['math', 'sklearn', 'neighbourhood_crime'],
+        'extra-imports': ['neighbourhood_crime', 'sklearn.linear_model', 'math'],
         'max-line-length': 100,
         'disable': ['R1705', 'C0200']
     })
-    
+
     import python_ta.contracts
+
     python_ta.contracts.DEBUG_CONTRACTS = False
     python_ta.contracts.check_all_contracts()

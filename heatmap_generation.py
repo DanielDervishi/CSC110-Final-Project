@@ -1,5 +1,7 @@
 """
 Functions to generate a heatmap given p-index data in the form of a CrimeData object.
+
+David De Martin
 """
 
 import plotly.express as px

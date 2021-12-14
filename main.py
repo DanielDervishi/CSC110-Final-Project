@@ -2,6 +2,8 @@
 Viral Crimes During the Pandemic: CSC110 project
 A data visualiztion of the deviation of crime rates from the expected
 values during the COVID-19 pandemic.
+
+Benedek Balla, Martin Calcaterra, David De Martin, Daniel Dervishi
 """
 import process_csv
 import heatmap_generation

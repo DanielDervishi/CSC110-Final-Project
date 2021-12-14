@@ -1,6 +1,8 @@
 """
 A collection of functions to analyse and process data, in order
-to generate pindex values.
+to generate p-index values.
+
+Martin Calcaterra, Daniel Dervishi
 """
 import math
 from sklearn.linear_model import LinearRegression

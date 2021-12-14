@@ -1,6 +1,8 @@
 """
 A collection of functions to process a CSV file of crime data
 from the Vancouver Police Department.
+
+Daniel Dervishi
 """
 import datetime
 import pandas as pd
@@ -19,7 +21,7 @@ def get_vancouver_data(path: str, start_year_month: tuple[int, int],
 
     Preconditions:
         - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
-        datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
+        datetime.date(year=end_year_month[0], month=end_year_month[1], day=1)
     """
     df = pd.read_csv(path)
     return dataframe_to_crime_data(df, (0, 1, 2, 3, 4), start_year_month, end_year_month)
@@ -46,13 +48,13 @@ def create_csv(raw_path: str, processed_path: str, necessary_columns: list,
         - raw_path == './pre-processed-crime-data-vancouver.csv'
         - necessary_columns == ['TYPE','NEIGHBOURHOOD', 'YEAR', 'MONTH']
         - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
-        datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
+        datetime.date(year=end_year_month[0], month=end_year_month[1], day=1)
 
     Code used to create 'crime_data_vancouver.csv'. CAUTION: This will cause crime_data_vancouver
     to be updated when running doctests.
-    >>> create_csv('./pre-processed-crime-data-vancouver.csv', './crime_data_vancouver.csv',\
-    ['TYPE','NEIGHBOURHOOD', 'YEAR', 'MONTH'], start_year_month=(2003,1), \
-    end_year_month=(2021,11))
+    # >>> create_csv('./pre-processed-crime-data-vancouver.csv', './crime_data_vancouver.csv',\
+    # ['TYPE','NEIGHBOURHOOD', 'YEAR', 'MONTH'], start_year_month=(2003,1), \
+    # end_year_month=(2021,11))
     """
 
     # filter to only include necessary columns
@@ -114,7 +116,7 @@ def dataframe_to_crime_data(df: pd.DataFrame, observation: tuple[int, int, int, 
         - len({observation[0], observation[1], observation[2], observation[3], \
         observation[4]}) == 5
         - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
-        datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
+        datetime.date(year=end_year_month[0], month=end_year_month[1], day=1)
     """
     col_num_crime_type = observation[0]
     col_num_neighbourhood = observation[1]
@@ -138,7 +140,7 @@ def date_in_range(start_year_month: tuple[int, int],
 
     Preconditions:
         - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
-        datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
+        datetime.date(year=end_year_month[0], month=end_year_month[1], day=1)
 
     >>> date_in_range((2003,1), (2003,1), (2003, 1))
     True

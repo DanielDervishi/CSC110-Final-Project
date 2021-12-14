@@ -1,6 +1,8 @@
 """
 A class to store crime data both of occurrences of certain crime types
 and pindex data for the data visualization and analysis.
+
+Daniel Dervishi, David De Martin, Martin Calcaterra
 """
 import datetime
 from dateutil import relativedelta
@@ -43,7 +45,7 @@ class CrimeData:
         Preconditions:
             - observation[2] >= 1
             - 1 <= observation[3] <= 12
-            - occurrences >= 1
+            - occurrences >= 0
         """
         crime = observation[0]
         neighbourhood = observation[1]
@@ -68,7 +70,7 @@ class CrimeData:
 
         Preconditions:
             - datetime.date(year=start_year_month[0], month=start_year_month[1], day=1) < \
-        datetime.date(year=start_year_month[0], month=start_year_month[1], day=1)
+        datetime.date(year=end_year_month[0], month=end_year_month[1], day=1)
 
         Only fill gaps that are within the timeframe the data was collected. Only
         (2003, 01) - (2021, 11) can be filled in our case.

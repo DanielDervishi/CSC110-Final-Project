@@ -1,6 +1,8 @@
 """
 A collection of classes to store neighbourhood crime data for occurrences of crimes
 as well as pindex data.
+
+Daniel Dervishi, David De Martin, Martin Calcaterra
 """
 
 from stat_analysis import gen_linear_regression, gen_rmsd, gen_z, gen_p, gen_pindex
@@ -31,8 +33,9 @@ class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
     Instance Attributes:
         - occurrences: maps year to a dictionary of months and the dictionary of months maps to the
         number of crime occurrences in this month.
+
     Representation Invariants:
-        - all(occurrences >= 0 for month_dict in self.occurrences.values() for occurrences in
+        - all(occurrences >= 0 for month_dict in self.occurrences.values() for occurrences in \
         month_dict.values())
     """
     occurrences: dict[int, dict[int, int]]
@@ -53,7 +56,7 @@ class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
         Preconditions:
             - year >= 0
             - 1 <= month <= 12
-            - occurrences >= 1
+            - occurrences >= 0
         """
         if year not in self.occurrences:
             self.occurrences[year] = {}
@@ -69,7 +72,7 @@ class NeighbourhoodCrimeOccurrences(NeighbourhoodCrime):
         Preconditions:
             - year >= 0
             - 1 <= month <= 12
-            - occurrences >= 1
+            - occurrences >= 0
         """
         if year not in self.occurrences:
             self.occurrences[year] = {}
@@ -108,7 +111,7 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
         - p_index_dict: dictionary that maps a specific year to a dictionary of months which map to
         the p-value associated with this month.
 
-    Preconditions:
+    Representation Invariants:
         - all(-100 < p_value < 100 for month_dict in self.occurrences.values() for p_value in \
         month_dict.values())
     """

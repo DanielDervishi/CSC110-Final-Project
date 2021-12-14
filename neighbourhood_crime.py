@@ -113,7 +113,7 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
     """
     p_index_dict: dict[int, dict[int, float]]
 
-    def __init__(self, neighbourhood: str, crime_type: str,
+    def __init__(self, neighbourhood_crime_type: tuple[str, str],
                  neighbourhood_crime_occurrences: NeighbourhoodCrimeOccurrences,
                  fit_range: tuple[int, int], predict_range: tuple[int, int]) -> None:
         """Initialize this NeighbourhoodCrimePIndex object with the neighbourhood, crime_type and
@@ -123,6 +123,8 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
         Parameters:
             - fit_range: range of years used to make the model
             - predict_range: range of years to make predictions with the model
+            - neighbourhood_crime_type: tuple containing neighbourhood at the first index and
+            crime type at the second index, both as strings.
 
         Preconditions
             - fit_range[1] < predict_range[0] (Predict range starts after the fit range.)
@@ -131,12 +133,14 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
         fit range to the end of the fit range.
         All months within predict_range in neighbourhood_crime_occurrences must contain entries.
         """
+        neighbourhood = neighbourhood_crime_type[0]
+        crime_type = neighbourhood_crime_type[1]
         NeighbourhoodCrime.__init__(self, neighbourhood=neighbourhood, crime_type=crime_type)
 
         self.p_index_dict = {}
 
         for month in range(1, 12 + 1):
-            monthly_occurrences = neighbourhood_crime_occurences.get_occurrences(month, fit_range)
+            monthly_occurrences = neighbourhood_crime_occurrences.get_occurrences(month, fit_range)
             month_model = gen_linear_regression(monthly_occurrences)
             rmsd = gen_rmsd(monthly_occurrences, month_model)
 
@@ -152,8 +156,7 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
 
                     p_index = gen_pindex(p, z[1])
 
-                    if year not in self.p_index_dict:
-                        self.p_index_dict[year] = {}
+                    value_in_dict(year, self.p_index_dict)
                     self.p_index_dict[year][month] = p_index
 
     def get_data(self, year: int, month: int) -> float:
@@ -166,6 +169,14 @@ class NeighbourhoodCrimePIndex(NeighbourhoodCrime):
         return self.p_index_dict[year][month]
 
 
+def value_in_dict(key: int, dictionary: dict) -> None:
+    """
+    Checks if the key is in the dictionary, sets value at this key to an empty dictionary if not.
+    """
+    if key not in dictionary:
+        dictionary[key] = {}
+
+
 if __name__ == '__main__':
     import doctest
 
@@ -174,6 +185,7 @@ if __name__ == '__main__':
     import python_ta
 
     python_ta.check_all(config={
+        'extra-imports': ['stat_analysis'],
         'max-line-length': 100,
         'disable': ['R1705', 'C0200']
     })

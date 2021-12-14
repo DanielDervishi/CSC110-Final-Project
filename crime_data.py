@@ -27,21 +27,28 @@ class CrimeData:
         self.crime_occurrences = {}
         self.crime_pindex = {}
 
-    def increment_crime(self, crime: str, neighbourhood: str, year: int, month: int,
-                        occurrences: int) -> None:
+    def increment_crime(self, observation: tuple[str, str, int, int], occurrences: int) -> None:
         """Increments the number of crime occurrences of a specific type in a specific neighbourhood
         in the given year and month by a specified amount.
 
-        If the crime or neighbourhood has not been entered before, they are added into the
-        crime_occurrences dictionary
-        and the NeighbourhoodCrimeOccurrences object that contains a dictionary that maps year and
-        month to number of occurrences is initialized so that all values are zero.
+        observation[0]: crime type
+        observation[1]: neighbourhood
+        observation[2]: year
+        observation[3]: month
+
+        If the crime/neighbourhood/year/month has not been entered before, they are added into the
+        crime_occurrences dictionary.
 
         Preconditions:
-            - year >= 1
-            - 1 <= month <= 12
+            - observation[2] >= 1
+            - 1 <= observation[3] <= 12
             - occurrences >= 1
         """
+        crime = observation[0]
+        neighbourhood = observation[1]
+        year = observation[2]
+        month = observation[3]
+        occurrences: int
         if crime not in self.crime_occurrences:
             self.crime_occurrences[crime] = {}
 
@@ -89,7 +96,7 @@ class CrimeData:
                 if crime_type not in self.crime_pindex:
                     self.crime_pindex[crime_type] = {}
                 self.crime_pindex[crime_type][neighbourhood] = \
-                    NeighbourhoodCrimePIndex(neighbourhood, crime_type,
+                    NeighbourhoodCrimePIndex((neighbourhood, crime_type),
                                              self.crime_occurrences[crime_type][neighbourhood],
                                              fit_range, predict_range)
 

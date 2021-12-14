@@ -1,6 +1,6 @@
 """
-statistical analysis
-Martin and Daniel
+A collection of functions to analyse and process data, in order
+to generate pindex values.
 """
 import math
 from sklearn.linear_model import LinearRegression

@@ -1,5 +1,6 @@
-"""A class to store neighbourhood crime data for CSC110 final project.
-David, Daniel, Martin
+"""
+A collection of classes to store neighbourhood crime data for occurrences of crimes
+as well as pindex data.
 """
 
 from stat_analysis import gen_linear_regression, gen_rmsd, gen_z, gen_p, gen_pindex

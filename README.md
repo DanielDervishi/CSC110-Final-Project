@@ -7,6 +7,7 @@
 By Benedek Balla, Daniel Dervishi, David De Martin, Martin Calcaterra
 
 ***
+Link: https://viral-crimes-during-pandemic.herokuapp.com/
 
 * This project aims to investigate, understand, and visually communicate the impact of the COVID-19 pandemic on crime rates in various neighbourhoods of urban Vancouver, Canada.
 * We use a null hypothesis model and utilize crime data from the Vancouver Police Department going back to 2003 to generate predictions of the expected crime rates for 2020 and 2021. We then compare these predictions with the actual crime rates in order to attempt to ascertain how the COVID-19 pandemic may have impacted the rates of specific crimes. 
